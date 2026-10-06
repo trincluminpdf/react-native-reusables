@@ -1,7 +1,6 @@
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { PreviewCarousel } from '@showcase/components/preview-carousel';
-import { StatusChip } from '@showcase/components/spec';
 import { figmaUrl, getComponent } from '@showcase/lib/constants';
 import * as Linking from 'expo-linking';
 import { ArrowSquareOutIcon } from 'phosphor-react-native';
@@ -11,7 +10,7 @@ import { Pressable, View } from 'react-native';
 type Preview = { name: string; component: () => React.JSX.Element };
 
 /**
- * One component page = status chip + link to its Figma page + carousel of previews.
+ * One component page = link to its Figma page + carousel of previews.
  * Preview names follow the Figma variant properties so design and code read the same.
  */
 function ComponentPage({ slug, previews }: { slug: string; previews: Preview[] }) {
@@ -19,8 +18,7 @@ function ComponentPage({ slug, previews }: { slug: string; previews: Preview[] }
   return (
     <View className="flex-1">
       {meta ? (
-        <View className="flex-row items-center justify-between px-4 pt-3">
-          <StatusChip status={meta.status} />
+        <View className="flex-row items-center justify-end px-4 pt-3">
           <Pressable
             onPress={() => Linking.openURL(figmaUrl(meta.figma))}
             className="flex-row items-center gap-1 rounded-md px-2 py-2 active:opacity-60"

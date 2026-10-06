@@ -8,7 +8,6 @@ import { FlashList } from '@shopify/flash-list';
 import { BLOCKS, COMPONENTS } from '@showcase/lib/constants';
 import { Link, type Href } from 'expo-router';
 import { CaretRightIcon } from 'phosphor-react-native';
-import { StatusChip } from '@showcase/components/spec';
 import type { ComponentStatus } from '@showcase/lib/constants';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
@@ -132,7 +131,6 @@ function ListItem({ href, name, status, isFirst, isLast }: ListItemProps) {
             {name}
           </Text>
           <View className="flex-row items-center gap-2">
-            {status ? <StatusChip status={status} /> : null}
             <Icon as={CaretRightIcon} className="text-muted-foreground size-4" />
           </View>
         </Button>
