@@ -42,26 +42,43 @@ import { previews as toggleGroup } from './toggle-group';
 import { previews as toggle } from './toggle';
 import { previews as tooltip } from './tooltip';
 import { previews as typography } from './typography';
+// ◆ In-app
+import { previews as showcaseDemo } from './showcase-demo';
+import { previews as appBar } from './app-bar';
+import { previews as navBar } from './nav-bar';
+import { previews as toolTile } from './tool-tile';
+import { previews as sectionHeader } from './section-header';
+import { previews as filterChips } from './filter-chips';
+import { previews as documentItem } from './document-item';
+import { previews as banner } from './banner';
+import { previews as workspaceItem } from './workspace-item';
+import { previews as toolbar } from './toolbar';
+import { previews as pageIndicator } from './page-indicator';
+import { previews as quickMenu } from './quick-menu';
+import { previews as textSelection } from './text-selection';
+import { previews as colorSwatch } from './color-swatch';
+import { previews as annotationSheet } from './annotation-sheet';
+import { previews as colorPicker } from './color-picker';
 
 /** slug (lib/constants COMPONENTS) → previews. One file per Figma page. */
 export const PREVIEWS: Record<string, Preview[]> = {
-  'accordion': accordion,
+  accordion: accordion,
   'alert-dialog': alertDialog,
-  'alert': alert,
-  'avatar': avatar,
-  'badge': badge,
-  'button': button,
-  'calendar': calendar,
-  'card': card,
-  'checkbox': checkbox,
-  'collapsible': collapsible,
+  alert: alert,
+  avatar: avatar,
+  badge: badge,
+  button: button,
+  calendar: calendar,
+  card: card,
+  checkbox: checkbox,
+  collapsible: collapsible,
   'context-menu': contextMenu,
   'date-picker': datePicker,
-  'dialog': dialog,
-  'drawer': drawer,
+  dialog: dialog,
+  drawer: drawer,
   'dropdown-menu': dropdownMenu,
-  'empty': empty,
-  'field': field,
+  empty: empty,
+  field: field,
   'fullscreen-modal': fullscreenModal,
   'input-group': inputGroup,
   'input-otp': inputOtp,
@@ -72,19 +89,36 @@ export const PREVIEWS: Record<string, Preview[]> = {
   'popover': popover,
   'progress': progress,
   'radio-group': radioGroup,
-  'select': select,
-  'separator': separator,
-  'sheet': sheet,
-  'skeleton': skeleton,
-  'slider': slider,
-  'sonner': sonner,
-  'spinner': spinner,
+  select: select,
+  separator: separator,
+  sheet: sheet,
+  skeleton: skeleton,
+  slider: slider,
+  sonner: sonner,
+  spinner: spinner,
   'splash-screen': splashScreen,
   switch: switchPreviews,
-  'tabs': tabs,
-  'textarea': textarea,
+  tabs: tabs,
+  textarea: textarea,
   'toggle-group': toggleGroup,
-  'toggle': toggle,
-  'tooltip': tooltip,
-  'typography': typography,
+  toggle: toggle,
+  tooltip: tooltip,
+  typography: typography,
+  // ◆ In-app
+  'showcase-demo': showcaseDemo,
+  'app-bar': appBar,
+  'nav-bar': navBar,
+  'tool-tile': toolTile,
+  'section-header': sectionHeader,
+  'filter-chips': filterChips,
+  'document-item': documentItem,
+  banner: banner,
+  'workspace-item': workspaceItem,
+  toolbar: toolbar,
+  'page-indicator': pageIndicator,
+  'quick-menu': quickMenu,
+  'text-selection': textSelection,
+  'color-swatch': colorSwatch,
+  'annotation-sheet': annotationSheet,
+  'color-picker': colorPicker,
 };

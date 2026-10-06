@@ -5,7 +5,7 @@ import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { useScrollToTop } from 'expo-router/react-navigation';
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
-import { BLOCKS, COMPONENTS } from '@showcase/lib/constants';
+import { BASE_COMPONENTS, BLOCKS, IN_APP_COMPONENTS } from '@showcase/lib/constants';
 import { Link, useFocusEffect, type Href } from 'expo-router';
 import { CaretRightIcon } from 'phosphor-react-native';
 import type { ComponentStatus } from '@showcase/lib/constants';
@@ -24,7 +24,7 @@ export default function ComponentsScreen() {
   const [search, setSearch] = React.useState('');
   const [isAtTop, setIsAtTop] = React.useState(true);
   const isAtTopRef = React.useRef(true);
-  const flashListRef = React.useRef<FlashListRef<(typeof COMPONENTS)[number]>>(null);
+  const flashListRef = React.useRef<FlashListRef<(typeof BASE_COMPONENTS)[number]>>(null);
   const isFocusedRef = React.useRef(true);
   const restoreTargetRef = React.useRef<number | null>(null);
   useScrollToTop(flashListRef);
@@ -55,9 +55,13 @@ export default function ComponentsScreen() {
     }, [])
   );
 
+  const query = search.toLowerCase();
   const data = !search
-    ? COMPONENTS
-    : COMPONENTS.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
+    ? BASE_COMPONENTS
+    : BASE_COMPONENTS.filter((item) => item.name.toLowerCase().includes(query));
+  const inApp = !search
+    ? IN_APP_COMPONENTS
+    : IN_APP_COMPONENTS.filter((item) => item.name.toLowerCase().includes(query));
 
   return (
     <View
@@ -113,12 +117,37 @@ export default function ComponentsScreen() {
             isLast={index === data.length - 1}
           />
         )}
-        ListFooterComponent={Platform.select({
-          // Blocks are web-only in the showcase (used for iframe previews).
-          web: <BlocksSection />,
-          default: <View className="android:pb-safe" />,
-        })}
+        ListFooterComponent={
+          <>
+            <InAppSection items={inApp} />
+            {Platform.select({
+              // Blocks are web-only in the showcase (used for iframe previews).
+              web: <BlocksSection />,
+              default: <View className="android:pb-safe" />,
+            })}
+          </>
+        }
       />
+    </View>
+  );
+}
+
+/** ◆ In-app — Figma section "--- In-app ◆" (app screens built from the components above). */
+function InAppSection({ items }: { items: typeof IN_APP_COMPONENTS }) {
+  if (items.length === 0) return null;
+  return (
+    <View className="pt-8">
+      <SectionTitle>In-app</SectionTitle>
+      {items.map((item, index) => (
+        <ListItem
+          key={item.slug}
+          href={`/components/${item.slug}`}
+          name={item.name}
+          status={item.status}
+          isFirst={index === 0}
+          isLast={index === items.length - 1}
+        />
+      ))}
     </View>
   );
 }
@@ -145,7 +174,9 @@ function HomeTitle() {
   return (
     <View className="gap-1 pb-4">
       <Text className="text-3xl font-semibold">PDF Mobile DS</Text>
-      <Text className="text-muted-foreground text-sm">{COMPONENTS.length} components</Text>
+      <Text className="text-muted-foreground text-sm">
+        {BASE_COMPONENTS.length} components · {IN_APP_COMPONENTS.length} in-app
+      </Text>
     </View>
   );
 }
@@ -183,11 +214,21 @@ function ListItem({ href, name, status, isFirst, isLast }: ListItemProps) {
             {name}
           </Text>
           <View className="flex-row items-center gap-2">
+            {status === 'New' ? <NewTag /> : null}
             <Icon as={CaretRightIcon} className="text-muted-foreground size-4" />
           </View>
         </Button>
       </Link.Trigger>
       <Link.Preview style={{ backgroundColor: colorScheme === 'dark' ? 'black' : 'white' }} />
     </Link>
+  );
+}
+
+/** Marks the latest Figma batch (status "New"). Older batches drop it when a newer one lands. */
+function NewTag() {
+  return (
+    <View className="rounded-full bg-blue-500/15 px-2 py-0.5">
+      <Text className="text-[11px] font-medium text-blue-700 dark:text-blue-300">New</Text>
+    </View>
   );
 }

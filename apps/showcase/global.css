@@ -35,6 +35,35 @@
     --chart-3: 196.4 63.6% 23.7%;
     --chart-4: 43.3 96.4% 56.3%;
     --chart-5: 37.7 92.1% 50.2%;
+    /* ◆ In-app: 3. Mode › components/card-* (Tool Tile colors, Banner = sky) */
+    --card-red: 0.0 85.7% 97.3%; /* #fef2f2 */
+    --card-red-foreground: 0.0 72.2% 50.6%; /* #dc2626 */
+    --card-orange: 33.3 100.0% 96.5%; /* #fff7ed */
+    --card-orange-foreground: 20.5 90.2% 48.2%; /* #ea580c */
+    --card-amber: 48.0 100.0% 96.1%; /* #fffbeb */
+    --card-amber-foreground: 32.1 94.6% 43.7%; /* #d97706 */
+    --card-yellow: 54.5 91.7% 95.3%; /* #fefce8 */
+    --card-yellow-foreground: 40.6 96.1% 40.4%; /* #ca8a04 */
+    --card-lime: 78.3 92.0% 95.1%; /* #f7fee7 */
+    --card-lime-foreground: 84.8 85.2% 34.5%; /* #65a30d */
+    --card-green: 138.5 76.5% 96.7%; /* #f0fdf4 */
+    --card-green-foreground: 142.1 76.2% 36.3%; /* #16a34a */
+    --card-teal: 166.2 76.5% 96.7%; /* #f0fdfa */
+    --card-teal-foreground: 174.7 83.9% 31.6%; /* #0d9488 */
+    --card-cyan: 183.2 100.0% 96.3%; /* #ecfeff */
+    --card-cyan-foreground: 191.6 91.4% 36.5%; /* #0891b2 */
+    --card-sky: 204.0 100.0% 97.1%; /* #f0f9ff */
+    --card-sky-foreground: 200.4 98.0% 39.4%; /* #0284c7 */
+    --card-blue: 213.8 100.0% 96.9%; /* #eff6ff */
+    --card-blue-foreground: 221.2 83.2% 53.3%; /* #2563eb */
+    --card-indigo: 225.9 100.0% 96.7%; /* #eef2ff */
+    --card-indigo-foreground: 243.4 75.4% 58.6%; /* #4f46e5 */
+    --card-violet: 250.0 100.0% 97.6%; /* #f5f3ff */
+    --card-violet-foreground: 262.1 83.3% 57.8%; /* #7c3aed */
+    --card-pink: 327.3 73.3% 97.1%; /* #fdf2f8 */
+    --card-pink-foreground: 333.3 71.4% 50.6%; /* #db2777 */
+    --card-rose: 355.7 100.0% 97.3%; /* #fff1f2 */
+    --card-rose-foreground: 346.8 77.2% 49.8%; /* #e11d48 */
   }
 
   .dark:root {
@@ -62,6 +91,35 @@
     --chart-3: 37.7 92.1% 50.2%;
     --chart-4: 270.7 91% 65.1%;
     --chart-5: 349.7 89.2% 60.2%;
+    /* ◆ In-app: 3. Mode › components/card-* (Tool Tile colors, Banner = sky) */
+    --card-red: 0.0 74.7% 15.5%; /* #450a0a */
+    --card-red-foreground: 0.0 90.6% 70.8%; /* #f87171 */
+    --card-orange: 13.0 81.1% 14.5%; /* #431407 */
+    --card-orange-foreground: 27.0 96.0% 61.0%; /* #fb923c */
+    --card-amber: 20.9 91.7% 14.1%; /* #451a03 */
+    --card-amber-foreground: 43.3 96.4% 56.3%; /* #fbbf24 */
+    --card-yellow: 26.0 83.3% 14.1%; /* #422006 */
+    --card-yellow-foreground: 47.9 95.8% 53.1%; /* #facc15 */
+    --card-lime: 89.3 80.4% 10.0%; /* #1a2e05 */
+    --card-lime-foreground: 82.7 78.0% 55.5%; /* #a3e635 */
+    --card-green: 144.9 80.4% 10.0%; /* #052e16 */
+    --card-green-foreground: 141.9 69.2% 58.0%; /* #4ade80 */
+    --card-teal: 178.6 84.3% 10.0%; /* #042f2e */
+    --card-teal-foreground: 172.5 66.0% 50.4%; /* #2dd4bf */
+    --card-cyan: 197.0 78.9% 14.9%; /* #083344 */
+    --card-cyan-foreground: 187.9 85.7% 53.3%; /* #22d3ee */
+    --card-sky: 204.0 80.2% 15.9%; /* #082f49 */
+    --card-sky-foreground: 198.4 93.2% 59.6%; /* #38bdf8 */
+    --card-blue: 226.2 57.0% 21.0%; /* #172554 */
+    --card-blue-foreground: 213.1 93.9% 67.8%; /* #60a5fa */
+    --card-indigo: 243.8 47.1% 20.0%; /* #1e1b4b */
+    --card-indigo-foreground: 234.5 89.5% 73.9%; /* #818cf8 */
+    --card-violet: 243.8 47.1% 20.0%; /* #1e1b4b */
+    --card-violet-foreground: 255.1 91.7% 76.3%; /* #a78bfa */
+    --card-pink: 336.2 83.9% 17.1%; /* #500724 */
+    --card-pink-foreground: 328.6 85.5% 70.2%; /* #f472b6 */
+    --card-rose: 343.1 87.7% 15.9%; /* #4c0519 */
+    --card-rose-foreground: 351.3 94.5% 71.4%; /* #fb7185 */
   }
 }
 

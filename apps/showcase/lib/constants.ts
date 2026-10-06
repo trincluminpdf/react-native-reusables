@@ -3,7 +3,9 @@
  * `figma` = page node id in PDF-Mobile-DS (https://www.figma.com/design/EotlK1nCd33Udubm5PcZQt/PDF-Mobile-DS).
  * `status` mirrors the Figma page header chip:
  *   RNR = straight from react-native-reusables · RNR + Custom = RNR with ◆ Lumin deltas ·
- *   Custom = not in RNR (◆, dev builds it) · New = designed fresh for mobile.
+ *   Custom = not in RNR (◆, dev builds it) · New = the latest batch designed fresh for mobile (In-app ◆).
+ *   When a newer batch lands, the previous New items move to Custom (Figma page header chip too).
+ * `group: 'in-app'` = Figma section "--- In-app ◆" (app screens: Home, Viewer, annotation tools).
  */
 export const FIGMA_FILE_URL = 'https://www.figma.com/design/EotlK1nCd33Udubm5PcZQt/PDF-Mobile-DS';
 
@@ -16,7 +18,7 @@ export const COMPONENTS = [
   { slug: 'avatar', name: 'Avatar', figma: '6-7', status: 'RNR + Custom' },
   { slug: 'badge', name: 'Badge', figma: '6-8', status: 'RNR + Custom' },
   { slug: 'button', name: 'Button', figma: '6-9', status: 'RNR + Custom' },
-  { slug: 'calendar', name: 'Calendar', figma: '6-10', status: 'New' },
+  { slug: 'calendar', name: 'Calendar', figma: '6-10', status: 'Custom' },
   { slug: 'card', name: 'Card', figma: '6-11', status: 'RNR + Custom' },
   { slug: 'checkbox', name: 'Checkbox', figma: '6-12', status: 'RNR + Custom' },
   { slug: 'collapsible', name: 'Collapsible', figma: '6-13', status: 'RNR' },
@@ -27,7 +29,7 @@ export const COMPONENTS = [
   { slug: 'dropdown-menu', name: 'Dropdown Menu', figma: '6-18', status: 'RNR + Custom' },
   { slug: 'empty', name: 'Empty', figma: '6-19', status: 'Custom' },
   { slug: 'field', name: 'Field', figma: '6-20', status: 'Custom' },
-  { slug: 'fullscreen-modal', name: 'Fullscreen Modal', figma: '6-21', status: 'New' },
+  { slug: 'fullscreen-modal', name: 'Fullscreen Modal', figma: '6-21', status: 'Custom' },
   { slug: 'input', name: 'Input', figma: '6-22', status: 'RNR + Custom' },
   { slug: 'input-group', name: 'Input Group', figma: '6-23', status: 'Custom' },
   { slug: 'input-otp', name: 'Input OTP', figma: '6-24', status: 'Custom' },
@@ -51,7 +53,7 @@ export const COMPONENTS = [
     name: 'Splash Screen',
     figma: '1278-2687',
     figmaFile: 'https://www.figma.com/design/58565Ulu9KCUG3L89AwX8g/LPA-001---App-component',
-    status: 'New',
+    status: 'Custom',
   },
   { slug: 'switch', name: 'Switch', figma: '6-37', status: 'RNR + Custom' },
   { slug: 'tabs', name: 'Tabs', figma: '6-38', status: 'RNR + Custom' },
@@ -60,6 +62,65 @@ export const COMPONENTS = [
   { slug: 'toggle-group', name: 'Toggle Group', figma: '6-41', status: 'RNR + Custom' },
   { slug: 'tooltip', name: 'Tooltip', figma: '6-42', status: 'RNR' },
   { slug: 'typography', name: 'Typography', figma: '6-43', status: 'RNR + Custom' },
+  // ◆ In-app (Figma section "--- In-app ◆"), in Figma page order.
+  {
+    slug: 'showcase-demo',
+    name: 'Showcase demo',
+    figma: '75-2933',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'app-bar', name: 'App Bar', figma: '75-2918', status: 'New', group: 'in-app' },
+  { slug: 'nav-bar', name: 'Nav Bar', figma: '75-2919', status: 'New', group: 'in-app' },
+  { slug: 'tool-tile', name: 'Tool Tile', figma: '75-2920', status: 'New', group: 'in-app' },
+  {
+    slug: 'section-header',
+    name: 'Section Header',
+    figma: '75-2921',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'filter-chips', name: 'Filter Chips', figma: '75-2922', status: 'New', group: 'in-app' },
+  {
+    slug: 'document-item',
+    name: 'Document Item',
+    figma: '75-2923',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'banner', name: 'Banner', figma: '75-2924', status: 'New', group: 'in-app' },
+  {
+    slug: 'workspace-item',
+    name: 'Workspace Item',
+    figma: '75-2925',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'toolbar', name: 'Toolbar', figma: '75-2926', status: 'New', group: 'in-app' },
+  {
+    slug: 'page-indicator',
+    name: 'Page Indicator',
+    figma: '75-2927',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'quick-menu', name: 'Quick Menu', figma: '75-2928', status: 'New', group: 'in-app' },
+  {
+    slug: 'text-selection',
+    name: 'Text Selection',
+    figma: '75-2929',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'color-swatch', name: 'Color Swatch', figma: '75-2930', status: 'New', group: 'in-app' },
+  {
+    slug: 'annotation-sheet',
+    name: 'Annotation Sheet',
+    figma: '75-2931',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'color-picker', name: 'Color Picker', figma: '75-2932', status: 'New', group: 'in-app' },
 ] as const satisfies ReadonlyArray<{
   slug: string;
   name: string;
@@ -68,6 +129,7 @@ export const COMPONENTS = [
   /** Figma file the `figma` node lives in, when it is not PDF-Mobile-DS. */
   figmaFile?: string;
   status: ComponentStatus;
+  group?: 'in-app';
 }>;
 
 export type ComponentSlug = (typeof COMPONENTS)[number]['slug'];
@@ -80,6 +142,11 @@ export function figmaUrl(nodeId: string, file: string = FIGMA_FILE_URL) {
 export function componentFigmaUrl(meta: { figma: string; figmaFile?: string }) {
   return meta.figma ? figmaUrl(meta.figma, meta.figmaFile) : null;
 }
+
+/** Base kit components (Figma pages before "--- In-app ◆"). */
+export const BASE_COMPONENTS = COMPONENTS.filter((c) => !('group' in c));
+/** ◆ In-app components + Showcase demo. */
+export const IN_APP_COMPONENTS = COMPONENTS.filter((c) => 'group' in c && c.group === 'in-app');
 
 export function getComponent(slug: string) {
   return COMPONENTS.find((c) => c.slug === slug);

@@ -11,7 +11,14 @@ import {
   normalizePath,
   setLastShellPath,
 } from '@showcase/lib/desktop-frame';
-import { COMPONENTS, componentFigmaUrl, FIGMA_FILE_URL, getComponent } from '@showcase/lib/constants';
+import {
+  BASE_COMPONENTS,
+  COMPONENTS,
+  componentFigmaUrl,
+  FIGMA_FILE_URL,
+  getComponent,
+  IN_APP_COMPONENTS,
+} from '@showcase/lib/constants';
 import { usePathname } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import {
@@ -175,7 +182,7 @@ function Sidebar({
             </Text>
           </View>
           <Text className="text-muted-foreground text-xs" numberOfLines={1}>
-            {COMPONENTS.length} components
+            {BASE_COMPONENTS.length} components · {IN_APP_COMPONENTS.length} in-app
           </Text>
         </View>
       </Pressable>
@@ -196,36 +203,60 @@ function Sidebar({
         </View>
       </View>
       <ScrollView className="flex-1" contentContainerClassName="px-3 pb-4">
-        {items.map((item) => {
-          const href = `/components/${item.slug}`;
-          const selected = active === href;
-          const custom = item.status === 'Custom' || item.status === 'New';
-          return (
-            <Pressable
-              key={item.slug}
-              onPress={() => onSelect(href)}
-              accessibilityRole="link"
-              aria-current={selected ? 'page' : undefined}
-              className={cn(
-                'h-8 flex-row items-center rounded-md px-2.5',
-                selected ? 'bg-accent' : 'web:hover:bg-accent/60'
-              )}>
-              <Text
-                className={cn('text-sm', selected ? 'font-medium' : 'text-foreground/80')}
-                numberOfLines={1}>
-                {custom ? (
-                  <Text className="text-xs text-violet-600 dark:text-violet-400">◆ </Text>
-                ) : null}
-                {item.name}
-              </Text>
-            </Pressable>
-          );
-        })}
+        {items
+          .filter((c) => !('group' in c))
+          .map((item) => (
+            <SidebarItem key={item.slug} item={item} active={active} onSelect={onSelect} />
+          ))}
+        {items.some((c) => 'group' in c) ? (
+          <Text className="text-muted-foreground px-2.5 pb-1 pt-4 text-xs font-medium">In-app</Text>
+        ) : null}
+        {items
+          .filter((c) => 'group' in c)
+          .map((item) => (
+            <SidebarItem key={item.slug} item={item} active={active} onSelect={onSelect} />
+          ))}
         {items.length === 0 ? (
           <Text className="text-muted-foreground px-2.5 py-2 text-sm">No match</Text>
         ) : null}
       </ScrollView>
     </View>
+  );
+}
+
+function SidebarItem({
+  item,
+  active,
+  onSelect,
+}: {
+  item: (typeof COMPONENTS)[number];
+  active: string;
+  onSelect: (path: string) => void;
+}) {
+  const href = `/components/${item.slug}`;
+  const selected = active === href;
+  const custom = item.status === 'Custom' || item.status === 'New';
+  return (
+    <Pressable
+      onPress={() => onSelect(href)}
+      accessibilityRole="link"
+      aria-current={selected ? 'page' : undefined}
+      className={cn(
+        'h-8 flex-row items-center gap-2 rounded-md px-2.5',
+        selected ? 'bg-accent' : 'web:hover:bg-accent/60'
+      )}>
+      <Text
+        className={cn('flex-1 text-sm', selected ? 'font-medium' : 'text-foreground/80')}
+        numberOfLines={1}>
+        {custom ? <Text className="text-xs text-violet-600 dark:text-violet-400">◆ </Text> : null}
+        {item.name}
+      </Text>
+      {item.status === 'New' ? (
+        <View className="rounded-full bg-blue-500/15 px-1.5 py-px">
+          <Text className="text-[10px] font-medium text-blue-700 dark:text-blue-300">New</Text>
+        </View>
+      ) : null}
+    </Pressable>
   );
 }
 

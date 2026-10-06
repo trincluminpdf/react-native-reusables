@@ -1,0 +1,60 @@
+/**
+ * ◆ Lumin in-app — Lumin logo. Figma: PDF-Mobile-DS › ◆ App Bar › Lumin Logo (Type=Mark / Lockup),
+ * copied from LPA-001 App component › 13 · Brand. Monochrome: token logo/fg = text-foreground.
+ * Color comes from a `text-*` className (or the `color` prop).
+ */
+import { cn } from '@/registry/nativewind/lib/utils';
+import { cssInterop } from 'nativewind';
+import * as React from 'react';
+import Svg, { Path } from 'react-native-svg';
+
+const MARK =
+  'M4.36978 22.5L7.76658 16.6193H1.00197C0.190792 16.6193 -0.260063 15.8385 0.16001 15.1193L8.63751 0.509638C8.81857 0.178916 9.08836 0 9.57 0H17.9859C18.7971 0 19.248 0.780722 18.8279 1.5L11.1942 14.7H23.0666C23.8777 14.7 24.2998 15.5096 23.9086 16.2L19.7006 23.4905C19.5195 23.8212 19.2498 24 18.7681 24H5.20994C4.39876 24 3.94791 23.2193 4.36798 22.5H4.36978ZM8.87831 14.7L16.302 1.91928H10.1403L2.68588 14.7H8.87831ZM18.2557 22.0789L21.3519 16.6193H10.0806L6.92462 22.0789H18.2557Z';
+const WORDMARK = [
+  'M36.1015 2.10364H39.0711V19.303H48.0392V21.8856H36.1015V2.10364Z',
+  'M50.0093 7.06445H52.8918V16.162C52.8918 18.7446 54.0976 19.7421 56.0965 19.7421C58.0957 19.7421 59.4482 18.3036 59.4482 16.0735V7.06262H62.3308V21.8837H59.508V19.5939H59.3903C58.5085 21.2078 56.9783 22.2361 54.9794 22.2361C51.9212 22.2361 50.0093 20.1235 50.0093 16.8361V7.06262V7.06445Z',
+  'M65.8814 7.06444H68.7041V9.47169H68.8218C69.7036 7.68071 71.0564 6.71204 73.0262 6.71204C74.9963 6.71204 76.5551 7.59217 77.1129 9.47169H77.2306C78.1124 7.53434 79.5247 6.71204 81.348 6.71204C84.2596 6.71204 86.0522 8.53193 86.0522 11.906V21.8855H83.1695V12.5223C83.1695 9.96867 82.1991 9.20603 80.4935 9.20603C78.5525 9.20603 77.4062 10.5849 77.4062 12.8169V21.8855H74.5237V12.5223C74.5237 9.96867 73.5531 9.20603 71.8475 9.20603C69.9065 9.20603 68.7605 10.5849 68.7605 12.8169V21.8855H65.8777V7.06444H65.8814Z',
+  'M89.1265 3.04335C89.1265 1.98611 89.9197 1.31201 90.921 1.31201C91.9223 1.31201 92.7152 1.98611 92.7152 3.04335C92.7152 4.10057 91.9223 4.77467 90.921 4.77467C89.9197 4.77467 89.1265 4.09877 89.1265 3.04335ZM89.4796 7.06443H92.3622V21.8855H89.4796V7.06443Z',
+  'M108.231 21.8855H105.348V12.8169C105.348 10.2633 104.142 9.20603 102.144 9.20603C99.996 9.20603 98.7321 10.5849 98.7321 12.8169V21.8855H95.8495V7.06444H98.6723V9.47169H98.79C99.6718 7.68071 101.26 6.71204 103.259 6.71204C106.317 6.71204 108.229 8.82471 108.229 12.112V21.8855H108.231Z',
+];
+
+type LuminLogoProps = {
+  /** Mark = 24×24 symbol. Lockup = mark + "Lumin" wordmark (109×24). */
+  type?: 'mark' | 'lockup';
+  /** Rendered height in px (width follows the aspect ratio). */
+  height?: number;
+  color?: string;
+  className?: string;
+};
+
+function LuminLogoImpl({
+  type = 'mark',
+  height = 20,
+  color = 'currentColor',
+}: LuminLogoProps & { style?: unknown }) {
+  const vbWidth = type === 'mark' ? 24 : 109;
+  return (
+    <Svg
+      width={(vbWidth / 24) * height}
+      height={height}
+      viewBox={`0 0 ${vbWidth} 24`}
+      fill="none"
+      accessibilityLabel="Lumin">
+      <Path d={MARK} fill={color} />
+      {type === 'lockup'
+        ? WORDMARK.map((d) => <Path key={d.slice(0, 12)} d={d} fill={color} />)
+        : null}
+    </Svg>
+  );
+}
+
+cssInterop(LuminLogoImpl, {
+  className: { target: 'style', nativeStyleToProp: { color: 'color' } },
+});
+
+function LuminLogo({ className, ...props }: LuminLogoProps) {
+  return <LuminLogoImpl className={cn('text-foreground', className)} {...props} />;
+}
+
+export { LuminLogo, MARK as LUMIN_MARK_PATH };
+export type { LuminLogoProps };

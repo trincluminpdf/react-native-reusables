@@ -53,6 +53,63 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // ◆ In-app: components/card-* (Tool Tile, Banner)
+        'card-red': {
+          DEFAULT: 'hsl(var(--card-red))',
+          foreground: 'hsl(var(--card-red-foreground))',
+        },
+        'card-orange': {
+          DEFAULT: 'hsl(var(--card-orange))',
+          foreground: 'hsl(var(--card-orange-foreground))',
+        },
+        'card-amber': {
+          DEFAULT: 'hsl(var(--card-amber))',
+          foreground: 'hsl(var(--card-amber-foreground))',
+        },
+        'card-yellow': {
+          DEFAULT: 'hsl(var(--card-yellow))',
+          foreground: 'hsl(var(--card-yellow-foreground))',
+        },
+        'card-lime': {
+          DEFAULT: 'hsl(var(--card-lime))',
+          foreground: 'hsl(var(--card-lime-foreground))',
+        },
+        'card-green': {
+          DEFAULT: 'hsl(var(--card-green))',
+          foreground: 'hsl(var(--card-green-foreground))',
+        },
+        'card-teal': {
+          DEFAULT: 'hsl(var(--card-teal))',
+          foreground: 'hsl(var(--card-teal-foreground))',
+        },
+        'card-cyan': {
+          DEFAULT: 'hsl(var(--card-cyan))',
+          foreground: 'hsl(var(--card-cyan-foreground))',
+        },
+        'card-sky': {
+          DEFAULT: 'hsl(var(--card-sky))',
+          foreground: 'hsl(var(--card-sky-foreground))',
+        },
+        'card-blue': {
+          DEFAULT: 'hsl(var(--card-blue))',
+          foreground: 'hsl(var(--card-blue-foreground))',
+        },
+        'card-indigo': {
+          DEFAULT: 'hsl(var(--card-indigo))',
+          foreground: 'hsl(var(--card-indigo-foreground))',
+        },
+        'card-violet': {
+          DEFAULT: 'hsl(var(--card-violet))',
+          foreground: 'hsl(var(--card-violet-foreground))',
+        },
+        'card-pink': {
+          DEFAULT: 'hsl(var(--card-pink))',
+          foreground: 'hsl(var(--card-pink-foreground))',
+        },
+        'card-rose': {
+          DEFAULT: 'hsl(var(--card-rose))',
+          foreground: 'hsl(var(--card-rose-foreground))',
+        },
       },
       borderRadius: {
         xl: 'calc(var(--radius) + 4px)',

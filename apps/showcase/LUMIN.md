@@ -20,11 +20,31 @@ Every component file starts with a header comment listing its ◆ Lumin deltas �
 
 ## Status
 
-The preview no longer shows status chips. `status` in `lib/constants.ts` still mirrors Figma and drives the ◆ prefix in the component list:
+The preview shows no status chips — only the ◆ prefix and a small **New** tag. `status` in `lib/constants.ts` mirrors the Figma page header chip:
 
 - **RNR / RNR + Custom** — from the base kit (react-native-reusables), with or without Lumin deltas — no prefix.
-- **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker).
-- **◆ New** — designed fresh for mobile (Calendar, Fullscreen Modal).
+- **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker, Calendar, Fullscreen Modal, Splash Screen).
+- **◆ New** — the latest batch only (now: the In-app components). When the next batch lands, set the previous New items to Custom here **and** in the Figma page header (Status chip), so the New tag always means "just added".
+
+## In-app ◆ (Oct 2026)
+
+Figma section `--- In-app ◆` (pages after Typography) = app-screen components from LPM-101 Home and LPM-1301 Viewer, corrected for the source's visual/logic issues. Listed under **In-app** on Home and in the desktop sidebar (`group: 'in-app'`).
+
+| Figma page | Code (`packages/registry/src/nativewind/components/ui/`) |
+| --- | --- |
+| ◆ App Bar (+ Lumin Logo) | `app-bar.tsx`, `lumin-logo.tsx`, shared glass pill `glass.tsx` |
+| ◆ Nav Bar | `nav-bar.tsx` |
+| ◆ Tool Tile | `tool-tile.tsx` (colors = `components/card-*` in `global.css` / `tailwind.config.js`) |
+| ◆ Section Header · ◆ Filter Chips · ◆ Document Item · ◆ Banner · ◆ Workspace Item | `section-header.tsx` · `filter-chip.tsx` · `document-item.tsx` · `banner.tsx` · `workspace-item.tsx` |
+| ◆ Toolbar (+ Tool Item) | `toolbar.tsx`, Lumin-only tool icons in `lumin-icons.tsx` |
+| ◆ Page Indicator · ◆ Quick Menu · ◆ Text Selection | `page-indicator.tsx` · `quick-menu.tsx` · `text-selection.tsx` |
+| ◆ Color Swatch (+ Color Palette) | `color-swatch.tsx` — `ANNOTATION_PALETTES` = the web hex presets (LPA-001 › color_palette) |
+| ◆ Annotation Sheet · ◆ Color Picker | `annotation-sheet.tsx` · `color-picker.tsx` |
+| ◆ Showcase demo | `examples/showcase-demo.tsx` (interactive: Viewer → Mark up → select text → Quick Menu → sheet → Color Picker; Home; Tools; Search) |
+
+- **Liquid glass** (`glass/*`): iOS 26+ uses `expo-glass-effect` (native Liquid Glass), older iOS `expo-blur`, Android a translucent surface (no reliable backdrop blur), web CSS `backdrop-blur-xl`. Native glass needs a new dev build (Expo Go is fine for blur).
+- **Toolbar pattern**: uniform Tool Items + a trailing Style color well; tapping the active tool again also opens the Annotation Sheet. Tool icons follow the web Tool icon table (Figma ◆ Icon Map).
+- Rows with a trailing More / action button keep the button as a sibling of the tappable area (no button inside a button on web); the whole row tints while pressed.
 
 ## Desktop preview (web ≥ 1024px)
 
