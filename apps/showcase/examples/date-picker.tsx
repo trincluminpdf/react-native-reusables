@@ -3,29 +3,40 @@ import { Text } from '@/registry/nativewind/components/ui/text';
 import type { Preview } from '@showcase/components/component-page';
 import { PreviewStack, Spec } from '@showcase/components/spec';
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 const SAMPLE = new Date(2026, 9, 14);
 const TODAY = new Date(new Date().setHours(0, 0, 0, 0));
 const IN_30_DAYS = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + 30);
 
+/** Interactive in every state that can open (tapping a static trigger did nothing on phones). */
+function LivePicker(
+  props: Omit<React.ComponentProps<typeof DatePicker>, 'value' | 'onChange'> & { initial?: Date }
+) {
+  const { initial, ...rest } = props;
+  const [date, setDate] = React.useState<Date | undefined>(initial);
+  return <DatePicker {...rest} value={date} onChange={setDate} />;
+}
+
 function Trigger() {
   return (
     <PreviewStack>
       <Spec label="State=Default">
-        <DatePickerTrigger />
+        <LivePicker />
       </Spec>
       <Spec label="State=Filled">
-        <DatePickerTrigger value={SAMPLE} />
+        <LivePicker initial={SAMPLE} />
       </Spec>
-      <Spec label="State=Focus (picker open) ◆ ring on native too">
-        <DatePickerTrigger value={SAMPLE} open />
+      <Spec label="State=Focus (picker open) ◆ ring on native too — static">
+        <View pointerEvents="none">
+          <DatePickerTrigger value={SAMPLE} open />
+        </View>
       </Spec>
       <Spec label="State=Disabled">
-        <DatePickerTrigger disabled />
+        <LivePicker disabled />
       </Spec>
       <Spec label="State=Invalid">
-        <DatePickerTrigger invalid />
+        <LivePicker invalid />
       </Spec>
     </PreviewStack>
   );
