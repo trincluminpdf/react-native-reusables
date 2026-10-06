@@ -102,7 +102,7 @@ export default function ComponentsScreen() {
               />
             </View>
           ),
-          web: <SectionTitle>Components</SectionTitle>,
+          web: <HomeTitle />,
         })}
         renderItem={({ item, index }) => (
           <ListItem
@@ -136,6 +136,16 @@ function BlocksSection() {
           isLast={index === BLOCKS.length - 1}
         />
       ))}
+    </View>
+  );
+}
+
+/** Web Home title (the bar above only shows the Lumin logo). */
+function HomeTitle() {
+  return (
+    <View className="gap-1 pb-4">
+      <Text className="text-3xl font-semibold">PDF Mobile DS</Text>
+      <Text className="text-muted-foreground text-sm">{COMPONENTS.length} components</Text>
     </View>
   );
 }

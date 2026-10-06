@@ -19,7 +19,7 @@ import * as React from 'react';
 import { Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/** Shown next to the Lumin logo on Home, so it drops the word "Lumin". */
+/** Fallback title; on Home the bar shows only the Lumin logo (title is in the page). */
 const APP_TITLE = 'PDF Mobile DS';
 const INSTALL_HINT_KEY = 'lumin-ds-install-hint-dismissed';
 
@@ -109,7 +109,8 @@ async function toggleFullscreen() {
 
 /**
  * Web-only top bar for testing the showcase on a real phone browser:
- * Home: Lumin logo (tap = reload home) + "PDF Mobile DS"; other pages: Back + component name.
+ * Home: Lumin logo (tap = reload home) — the page title sits below the bar; other pages: Back +
+ * component name.
  * Right side: fullscreen toggle and light/dark toggle.
  * Hidden when embedded in an iframe (docs previews) — except inside the desktop shell's phone
  * frame, where it acts as the app's nav bar (Back + title; theme is driven by the shell).
@@ -160,9 +161,6 @@ export function WebMobileBar() {
               className="web:cursor-pointer active:opacity-60">
               <LuminLogo height={18} color={colorScheme === 'dark' ? '#fafafa' : '#0a0a0a'} />
             </Pressable>
-            <Text className="flex-1 text-base font-semibold" numberOfLines={1}>
-              {APP_TITLE}
-            </Text>
           </View>
         ) : (
           <>
