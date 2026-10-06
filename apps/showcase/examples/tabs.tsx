@@ -62,7 +62,7 @@ export const previews: Preview[] = [
     name: 'Variant=Default',
     component: () => (
       <PreviewStack>
-        <Spec label="Variant=Default (RNR segmented) · Active / Disabled">
+        <Spec label="Variant=Default (base-kit segmented) · Active / Disabled">
           <Example variant="default" />
         </Spec>
       </PreviewStack>

@@ -46,7 +46,7 @@ export const previews: Preview[] = [
     name: 'Size=default',
     component: () => (
       <PreviewStack>
-        <Spec label="Size=default · py-6 gap-6, sections px-6 (RNR) · no shadow ◆">
+        <Spec label="Size=default · py-6 gap-6, sections px-6 (base kit) · no shadow ◆">
           <Login />
         </Spec>
       </PreviewStack>

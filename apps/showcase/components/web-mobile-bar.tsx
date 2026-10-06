@@ -3,6 +3,7 @@ import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { persistWebTheme } from '@showcase/hooks/use-web-color-scheme-sync';
 import { getComponent } from '@showcase/lib/constants';
+import { isShellFrame } from '@showcase/lib/desktop-frame';
 import { router, usePathname } from 'expo-router';
 import {
   ChevronLeftIcon,
@@ -48,6 +49,7 @@ function useClientState() {
   const [state, setState] = React.useState({
     ready: false,
     inIframe: false,
+    inShellFrame: false,
     standalone: false,
     canFullscreen: false,
     isIOS: false,
@@ -60,6 +62,7 @@ function useClientState() {
     setState({
       ready: true,
       inIframe: window.self !== window.top,
+      inShellFrame: isShellFrame(),
       standalone:
         window.matchMedia?.('(display-mode: standalone)').matches ||
         window.matchMedia?.('(display-mode: fullscreen)').matches ||
@@ -105,7 +108,8 @@ async function toggleFullscreen() {
 /**
  * Web-only top bar for testing the showcase on a real phone browser:
  * back button, current component name, fullscreen toggle and light/dark toggle.
- * Hidden when embedded in an iframe (docs previews).
+ * Hidden when embedded in an iframe (docs previews) — except inside the desktop shell's phone
+ * frame, where it acts as the app's nav bar (Back + title; theme is driven by the shell).
  */
 export function WebMobileBar() {
   const pathname = usePathname();
@@ -115,7 +119,9 @@ export function WebMobileBar() {
   const isFullscreen = useIsFullscreen();
   const isHome = pathname === '/' || pathname === '';
 
-  if (Platform.OS !== 'web' || !client.ready || client.inIframe) return null;
+  if (Platform.OS !== 'web' || !client.ready || (client.inIframe && !client.inShellFrame))
+    return null;
+  const chrome = !client.inShellFrame;
 
   function onBack() {
     vibrate();
@@ -152,7 +158,7 @@ export function WebMobileBar() {
           {toTitle(pathname)}
         </Text>
         <View className="w-24 flex-row items-center justify-end">
-          {client.canFullscreen && !client.standalone && (
+          {chrome && client.canFullscreen && !client.standalone && (
             <Button
               variant="ghost"
               size="icon"
@@ -165,17 +171,19 @@ export function WebMobileBar() {
               <Icon as={isFullscreen ? MinimizeIcon : MaximizeIcon} className="size-5" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-10 rounded-full"
-            onPress={onToggleTheme}
-            accessibilityLabel="Toggle dark mode">
-            <Icon as={colorScheme === 'dark' ? SunIcon : MoonIcon} className="size-5" />
-          </Button>
+          {chrome && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-10 rounded-full"
+              onPress={onToggleTheme}
+              accessibilityLabel="Toggle dark mode">
+              <Icon as={colorScheme === 'dark' ? SunIcon : MoonIcon} className="size-5" />
+            </Button>
+          )}
         </View>
       </View>
-      {isHome && client.isTouch && !client.standalone && (
+      {chrome && isHome && client.isTouch && !client.standalone && (
         <InstallHint isIOS={client.isIOS} canFullscreen={client.canFullscreen} />
       )}
     </View>

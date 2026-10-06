@@ -81,7 +81,7 @@ function Sizes() {
 function States() {
   return (
     <PreviewStack>
-      <Spec row label="State=Pressed — press to see (RNR active:bg-*/90)">
+      <Spec row label="State=Pressed — press to see (fill at 90%)">
         <Button>
           <Text>Press me</Text>
         </Button>

@@ -51,7 +51,7 @@ function Group({
 function Types() {
   return (
     <PreviewStack>
-      <Spec label="Type=Default (RNR joined items)">
+      <Spec label="Type=Default (base-kit joined items)">
         <Group />
       </Spec>
       <Spec label="Type=Fill ◆ (items stretch)">

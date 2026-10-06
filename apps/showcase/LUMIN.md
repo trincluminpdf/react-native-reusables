@@ -2,7 +2,7 @@
 
 Live: https://lumin-pdf-mobile-ds.vercel.app · Design source: [PDF-Mobile-DS (Figma)](https://www.figma.com/design/EotlK1nCd33Udubm5PcZQt/PDF-Mobile-DS)
 
-Figma is the documentation, this app is the running preview. Every component page here links to its Figma page (top-right "Figma ↗"), and every preview is named after the Figma variant properties (e.g. `Variant=PDF`, `Size=sm ◆`).
+Figma is the documentation, this app is the running preview. Every component page here links to its Figma page (top-right "Figma ↗" on phones, "Open in Figma" in the desktop panel), and every preview is named after the Figma variant properties (e.g. `Variant=PDF`, `Size=sm ◆`).
 
 ## Where things live
 
@@ -18,12 +18,22 @@ Figma is the documentation, this app is the running preview. Every component pag
 
 Every component file starts with a header comment listing its ◆ Lumin deltas — the same list as the Figma page header.
 
-## Status (same chip as Figma)
+## Status
 
-- **RNR** — straight from react-native-reusables.
-- **◆ RNR + Custom** — RNR plus Lumin deltas (e.g. Button `pdf` variant, soft destructive, `loading`, no shadows, focus ring on native).
-- **◆ Custom** — not in RNR; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker).
+The preview no longer shows status chips. `status` in `lib/constants.ts` still mirrors Figma and drives the ◆ prefix in the component list:
+
+- **RNR / RNR + Custom** — from the base kit (react-native-reusables), with or without Lumin deltas — no prefix.
+- **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker).
 - **◆ New** — designed fresh for mobile (Calendar, Fullscreen Modal).
+
+## Desktop preview (web ≥ 1024px)
+
+Big screens get a 3-column shell (`components/desktop-shell.web.tsx`): component list · phone frame · "Open on your phone" QR panel (+ copy link, Open in Figma).
+
+- The phone frame is an `<iframe>` of this same site (390 × 844, status bar drawn outside the iframe), so the preview inside renders exactly like a phone. Short windows scale the frame down.
+- Shell ↔ frame sync is in `lib/desktop-frame.ts` + `components/frame-bridge.tsx` (same-origin `postMessage`): taps/Back in the frame update the sidebar, address bar and QR; sidebar clicks navigate the frame. The theme toggle sets the frame's `dark` class.
+- Inside the frame the web top bar shows Back + title only, and the component page hides its own Figma link (the panel has it).
+- Below 1024px (or when embedded by another site) nothing changes: the phone layout is shown as before. Shrinking the window keeps the page that was in the frame.
 
 ## Tokens
 

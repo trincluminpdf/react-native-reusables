@@ -23,7 +23,7 @@ function Row({ children }: { children: string }) {
 function Example() {
   return (
     <PreviewStack>
-      <Spec label="Usage example (trigger Button + content) — RNR primitive, unstyled">
+      <Spec label="Usage example (trigger Button + content) — unstyled primitive">
         <Collapsible className="w-full gap-2">
           <View className="flex-row items-center justify-between gap-4 px-4">
             <Text className="text-sm font-semibold">Order #4189</Text>

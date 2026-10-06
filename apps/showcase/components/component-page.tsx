@@ -2,6 +2,7 @@ import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { PreviewCarousel } from '@showcase/components/preview-carousel';
 import { figmaUrl, getComponent } from '@showcase/lib/constants';
+import { isShellFrame } from '@showcase/lib/desktop-frame';
 import * as Linking from 'expo-linking';
 import { ArrowSquareOutIcon } from 'phosphor-react-native';
 import * as React from 'react';
@@ -15,9 +16,12 @@ type Preview = { name: string; component: () => React.JSX.Element };
  */
 function ComponentPage({ slug, previews }: { slug: string; previews: Preview[] }) {
   const meta = getComponent(slug);
+  // Inside the desktop shell's phone frame the side panel already links to Figma.
+  const [inShell, setInShell] = React.useState(false);
+  React.useEffect(() => setInShell(isShellFrame()), []);
   return (
     <View className="flex-1">
-      {meta ? (
+      {meta && !inShell ? (
         <View className="flex-row items-center justify-end px-4 pt-3">
           <Pressable
             onPress={() => Linking.openURL(figmaUrl(meta.figma))}

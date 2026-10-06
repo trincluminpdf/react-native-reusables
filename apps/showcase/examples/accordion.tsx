@@ -37,7 +37,7 @@ export const previews: Preview[] = [
     name: 'Variant=Basic',
     component: () => (
       <PreviewStack>
-        <Spec label="Variant=Basic (RNR)">
+        <Spec label="Variant=Basic (base kit)">
           <Items />
         </Spec>
       </PreviewStack>

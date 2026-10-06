@@ -10,7 +10,7 @@ function Example() {
   const [checked, setChecked] = React.useState(false);
   return (
     <PreviewStack>
-      <Spec label="State=Default · text-sm medium, leading-normal ◆ (RNR leading-none)">
+      <Spec label="State=Default · text-sm medium, leading-normal ◆ (base kit: leading-none)">
         <View className="w-full gap-2">
           <Label nativeID="email">Email</Label>
           <Input aria-labelledby="email" placeholder="m@example.com" />

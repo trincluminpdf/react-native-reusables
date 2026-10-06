@@ -29,7 +29,23 @@ const themeBootScript = `
 })();
 `;
 
+// Desktop (≥ 1024, top-level window): hide the mobile layout until the 3-column shell mounts,
+// so the page does not flash the phone list first. The shell removes the attribute; the
+// timeout is a safety net if JS fails.
+const desktopBootScript = `
+(function () {
+  try {
+    if (window.self === window.top && window.matchMedia('(min-width: 1024px)').matches) {
+      var html = document.documentElement;
+      html.setAttribute('data-ds-boot', 'desktop');
+      setTimeout(function () { html.removeAttribute('data-ds-boot'); }, 5000);
+    }
+  } catch (e) {}
+})();
+`;
+
 const mobileCss = `
+html[data-ds-boot="desktop"] #root { visibility: hidden; }
 html, body {
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
@@ -72,6 +88,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
 
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: desktopBootScript }} />
 
         {/*
           Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
