@@ -61,6 +61,8 @@ export default function Root({ children }: PropsWithChildren) {
 
         {/* Installable as an app (Add to Home Screen) -> launches fullscreen */}
         <link rel="manifest" href="/manifest.webmanifest" />
+        {/* ◆ Lumin mark favicon (Figma LPA-001 › V3d). SVG for modern browsers; Expo adds /favicon.ico from web.favicon */}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

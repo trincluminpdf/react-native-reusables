@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       scheme: `${SLUG}android`,
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
-        backgroundColor: '#0A0A0A',
+        backgroundColor: '#FFFFFF', // ◆ Lumin mark (LPA-001 App component › V3d) on white
       },
       package: 'com.reactnativereusables.android',
       intentFilters: [
