@@ -1,0 +1,13 @@
+/**
+ * ◆ Lumin mark — Figma LPA-001 App component › "V3d — With background" (node 1278:2687).
+ * Path is in the 240×240 frame; the mark itself spans 47…193 (146 units).
+ * Shared by the splash page, the web boot screen (+html.tsx) and the app icons.
+ */
+export const LUMIN_MARK_PATH =
+  'M73.5207 183.875L94.1363 148.101H53.081C48.1579 148.101 45.4217 143.351 47.9711 138.976L99.422 50.1003C100.521 48.0884 102.158 47 105.081 47H156.159C161.082 47 163.818 51.7494 161.269 56.125L114.939 136.425H186.994C191.917 136.425 194.478 141.35 192.104 145.55L166.565 189.9C165.466 191.912 163.829 193 160.906 193H78.6197C73.6966 193 70.9603 188.251 73.5097 183.875H73.5207ZM100.884 136.425L145.939 58.6756H108.543L63.3009 136.425H100.884ZM157.796 181.313L176.587 148.101H108.18L89.0263 181.313H157.796Z';
+
+/** viewBox cropped to the mark (no padding). */
+export const LUMIN_MARK_VIEWBOX = '47 47 146 146';
+
+/** Native splash: background + mark width as a share of the screen width (assets/images/splash.png). */
+export const SPLASH = { background: '#0A0A0A', markColor: '#FFFFFF', markWidthRatio: 0.35 } as const;

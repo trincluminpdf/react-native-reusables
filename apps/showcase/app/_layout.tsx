@@ -51,6 +51,10 @@ export default function RootLayout() {
   React.useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
+      // Web: fade out the HTML boot screen from app/+html.tsx (same look as the native splash).
+      if (Platform.OS === 'web') {
+        (window as Window & { __luminBootDone?: () => void }).__luminBootDone?.();
+      }
     }
   }, [loaded, error]);
 

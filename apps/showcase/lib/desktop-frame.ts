@@ -15,6 +15,12 @@ import { Platform, useWindowDimensions } from 'react-native';
  */
 export const DESKTOP_MIN_WIDTH = 1024;
 
+/**
+ * Bottom safe area of the phone frame (iPhone home indicator, pt). The iframe has no real
+ * safe area — env(safe-area-inset-bottom) is 0 inside it — so bottom-anchored UI uses this.
+ */
+export const SHELL_SAFE_BOTTOM = 34;
+
 export const FRAME_MESSAGE = {
   route: 'lumin-ds:route',
   navigate: 'lumin-ds:navigate',

@@ -33,6 +33,7 @@ import { previews as skeleton } from './skeleton';
 import { previews as slider } from './slider';
 import { previews as sonner } from './sonner';
 import { previews as spinner } from './spinner';
+import { previews as splashScreen } from './splash-screen';
 import { previews as switchPreviews } from './switch';
 import { previews as tabs } from './tabs';
 import { previews as textarea } from './textarea';
@@ -76,6 +77,7 @@ export const PREVIEWS: Record<string, Preview[]> = {
   'slider': slider,
   'sonner': sonner,
   'spinner': spinner,
+  'splash-screen': splashScreen,
   switch: switchPreviews,
   'tabs': tabs,
   'textarea': textarea,

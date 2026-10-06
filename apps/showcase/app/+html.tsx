@@ -1,4 +1,5 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
+import { LUMIN_MARK_PATH, LUMIN_MARK_VIEWBOX, SPLASH } from '@showcase/lib/lumin-mark';
 import type { PropsWithChildren } from 'react';
 
 // This file is web-only and used to configure the root HTML for every
@@ -43,6 +44,48 @@ const desktopBootScript = `
   } catch (e) {}
 })();
 `;
+
+// ◆ Web boot screen = the native splash (white Lumin mark on #0A0A0A). It is plain HTML, so it
+// paints before any JS. The app calls window.__luminBootDone() once fonts are ready
+// (app/_layout.tsx); the screen stays at least BOOT_MIN_MS so it never just flickers,
+// then fades out. Safety net: it removes itself after 10s if the app never reports in.
+const BOOT_MIN_MS = 800;
+const bootScript = `
+(function () {
+  var done = false;
+  function hide() {
+    if (done) return;
+    done = true;
+    var el = document.getElementById('lumin-boot');
+    if (!el) return;
+    el.classList.add('is-hidden');
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 350);
+  }
+  window.__luminBootDone = function () {
+    var wait = Math.max(0, ${BOOT_MIN_MS} - (window.performance ? performance.now() : 0));
+    setTimeout(hide, wait);
+  };
+  setTimeout(hide, 10000);
+})();
+`;
+
+const bootCss = `
+#lumin-boot {
+  position: fixed; inset: 0; z-index: 2147483647;
+  display: flex; align-items: center; justify-content: center;
+  background: ${SPLASH.background};
+  transition: opacity 300ms ease;
+}
+#lumin-boot.is-hidden { opacity: 0; pointer-events: none; }
+#lumin-boot svg {
+  width: min(${SPLASH.markWidthRatio * 100}vw, 140px); height: auto;
+  animation: lumin-boot-pulse 1.6s ease-in-out infinite;
+}
+@keyframes lumin-boot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { #lumin-boot svg { animation: none; } }
+`;
+
+const bootMarkup = `<svg viewBox="${LUMIN_MARK_VIEWBOX}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="${LUMIN_MARK_PATH}" fill="${SPLASH.markColor}"/></svg>`;
 
 const mobileCss = `
 html[data-ds-boot="desktop"] #root { visibility: hidden; }
@@ -89,12 +132,14 @@ export default function Root({ children }: PropsWithChildren) {
 
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <script dangerouslySetInnerHTML={{ __html: desktopBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
 
         {/*
           Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
         */}
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: mobileCss }} />
+        <style dangerouslySetInnerHTML={{ __html: bootCss }} />
 
         {/* Lumin DS fonts on web: Inter (text styles) + JetBrains Mono (code) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -104,7 +149,15 @@ export default function Root({ children }: PropsWithChildren) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <div
+          id="lumin-boot"
+          role="progressbar"
+          aria-label="Loading"
+          dangerouslySetInnerHTML={{ __html: bootMarkup }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,7 +1,7 @@
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { PreviewCarousel } from '@showcase/components/preview-carousel';
-import { figmaUrl, getComponent } from '@showcase/lib/constants';
+import { componentFigmaUrl, getComponent } from '@showcase/lib/constants';
 import { isShellFrame } from '@showcase/lib/desktop-frame';
 import * as Linking from 'expo-linking';
 import { ArrowSquareOutIcon } from 'phosphor-react-native';
@@ -24,7 +24,7 @@ function ComponentPage({ slug, previews }: { slug: string; previews: Preview[] }
       {meta && !inShell ? (
         <View className="flex-row items-center justify-end px-4 pt-3">
           <Pressable
-            onPress={() => Linking.openURL(figmaUrl(meta.figma))}
+            onPress={() => Linking.openURL(componentFigmaUrl(meta))}
             className="flex-row items-center gap-1 rounded-md px-2 py-2 active:opacity-60"
             accessibilityRole="link"
             hitSlop={6}>

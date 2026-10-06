@@ -2,6 +2,7 @@ import { cn } from '@/registry/nativewind/lib/utils';
 import { Button } from '@/registry/nativewind/components/ui/button';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
+import { isShellFrame, SHELL_SAFE_BOTTOM } from '@showcase/lib/desktop-frame';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import * as React from 'react';
 import { useState } from 'react';
@@ -14,6 +15,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Preview = { name: string; component: (props: unknown) => React.JSX.Element };
 
@@ -28,6 +30,12 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
   // Track the live window width so swiping/paging stays aligned after rotation or resize.
   const { width } = useWindowDimensions();
   const [height, setHeight] = useState(0);
+  // Keep the bottom bar clear of the home indicator: device safe area, or the simulated one
+  // inside the desktop phone frame (its iframe reports 0).
+  const insets = useSafeAreaInsets();
+  const [inShell, setInShell] = useState(false);
+  React.useEffect(() => setInShell(isShellFrame()), []);
+  const bottomInset = Math.max(insets.bottom, inShell ? SHELL_SAFE_BOTTOM : 0);
 
   function onScroll(ev: NativeSyntheticEvent<NativeScrollEvent>) {
     if (!width) return;
@@ -89,7 +97,9 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
         showsHorizontalScrollIndicator={false}
         contentContainerClassName={cn(!removeBottomSafeArea && 'native:pb-12 mb-safe')}
       />
-      <View className="mb-safe absolute bottom-0 left-0 right-0 flex-row items-center justify-between gap-3 px-4 pb-3">
+      <View
+        className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between gap-3 px-4"
+        style={{ paddingBottom: bottomInset + BAR_GAP }}>
         <View className="bg-background rounded-md">
           <Button
             variant="outline"
@@ -126,6 +136,9 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
 }
 
 export { PreviewCarousel };
+
+/** Space between the bar and the safe-area edge. */
+const BAR_GAP = 16;
 
 function keyExtractor(item: { name: string }) {
   return item.name;

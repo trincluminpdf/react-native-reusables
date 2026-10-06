@@ -43,6 +43,14 @@ export const COMPONENTS = [
   { slug: 'slider', name: 'Slider', figma: '6-34', status: 'Custom' },
   { slug: 'sonner', name: 'Sonner', figma: '6-35', status: 'Custom' },
   { slug: 'spinner', name: 'Spinner', figma: '6-36', status: 'Custom' },
+  // ◆ Code-side page: the mark lives in Figma LPA-001 App component (not a PDF-Mobile-DS page).
+  {
+    slug: 'splash-screen',
+    name: 'Splash Screen',
+    figma: '1278-2687',
+    figmaFile: 'https://www.figma.com/design/58565Ulu9KCUG3L89AwX8g/LPA-001---App-component',
+    status: 'New',
+  },
   { slug: 'switch', name: 'Switch', figma: '6-37', status: 'RNR + Custom' },
   { slug: 'tabs', name: 'Tabs', figma: '6-38', status: 'RNR + Custom' },
   { slug: 'textarea', name: 'Textarea', figma: '6-39', status: 'RNR + Custom' },
@@ -54,13 +62,20 @@ export const COMPONENTS = [
   slug: string;
   name: string;
   figma: string;
+  /** Figma file the `figma` node lives in, when it is not PDF-Mobile-DS. */
+  figmaFile?: string;
   status: ComponentStatus;
 }>;
 
 export type ComponentSlug = (typeof COMPONENTS)[number]['slug'];
 
-export function figmaUrl(nodeId: string) {
-  return `${FIGMA_FILE_URL}?node-id=${nodeId}`;
+export function figmaUrl(nodeId: string, file: string = FIGMA_FILE_URL) {
+  return `${file}?node-id=${nodeId}`;
+}
+
+/** Figma link for a component entry (handles entries that live outside PDF-Mobile-DS). */
+export function componentFigmaUrl(meta: { figma: string; figmaFile?: string }) {
+  return figmaUrl(meta.figma, meta.figmaFile);
 }
 
 export function getComponent(slug: string) {

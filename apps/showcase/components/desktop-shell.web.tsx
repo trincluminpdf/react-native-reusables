@@ -10,7 +10,7 @@ import {
   normalizePath,
   setLastShellPath,
 } from '@showcase/lib/desktop-frame';
-import { COMPONENTS, FIGMA_FILE_URL, figmaUrl, getComponent } from '@showcase/lib/constants';
+import { COMPONENTS, componentFigmaUrl, FIGMA_FILE_URL, getComponent } from '@showcase/lib/constants';
 import { usePathname } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import {
@@ -141,7 +141,7 @@ export function DesktopShell() {
           />
         </PhoneStage>
       </View>
-      <SidePanel url={pageUrl} figma={meta ? figmaUrl(meta.figma) : FIGMA_FILE_URL} />
+      <SidePanel url={pageUrl} figma={meta ? componentFigmaUrl(meta) : FIGMA_FILE_URL} />
     </View>
   );
 }
