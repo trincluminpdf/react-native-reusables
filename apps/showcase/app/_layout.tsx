@@ -4,6 +4,7 @@ import { Text } from '@/registry/nativewind/components/ui/text';
 import { ThemeProvider } from 'expo-router/react-navigation';
 import { PortalHost } from '@rn-primitives/portal';
 import { HeaderRightView } from '@showcase/components/header-right-view';
+import { WebMobileBar } from '@showcase/components/web-mobile-bar';
 import { useGeistFont } from '@showcase/hooks/use-geist-font';
 import { useWebColorSchemeSync } from '@showcase/hooks/use-web-color-scheme-sync';
 import { NAV_THEME } from '@showcase/lib/theme';
@@ -49,6 +50,7 @@ export default function RootLayout() {
       <GestureHandlerRootView
         style={{ flex: 1, backgroundColor: NAV_THEME[colorScheme].colors.background }}>
         <KeyboardProvider>
+          {Platform.OS === 'web' && <WebMobileBar />}
           <Stack
             screenOptions={{
               headerBackTitle: 'Back',
