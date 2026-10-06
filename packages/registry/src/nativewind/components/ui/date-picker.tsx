@@ -2,7 +2,11 @@
  * ◆ Lumin custom. Figma: PDF-Mobile-DS › ◆ Date Picker. Tokens: 5. Component › date-picker/*
  *
  * Build only the Trigger — the picker itself is NATIVE (@react-native-community/datetimepicker):
- * - Android: DateTimePickerAndroid.open({ mode: 'date' }) → Material date picker dialog.
+ * - Android: DateTimePickerAndroid.open({ mode: 'date', design: 'material' }) → Material 3 modal date
+ *   picker (Figma "Date Picker / Android (native demo)"). REQUIRES the app theme to inherit
+ *   Theme.Material3.* — add the `./plugins/withLuminAndroidTheme` config plugin (showcase does) and
+ *   rebuild the dev client; without it the M3 dialog crashes natively. `androidDesign="default"`
+ *   falls back to the legacy framework DatePickerDialog (no theme requirement, not DS-styled).
  * - iOS: <DateTimePicker display="inline" /> inside our ◆ Drawer (Figma "Inline in Drawer").
  *   display="compact" (iOS default) shows the system pill + popover instead of our Trigger.
  * - Web (showcase only): ◆ Calendar inside the Drawer as a stand-in for the native picker.
@@ -83,6 +87,20 @@ function DatePickerTrigger({
   );
 }
 
+type AndroidDesign = 'material' | 'default';
+
+function clampDate(date: Date, min?: Date, max?: Date) {
+  if (min && date < min) return new Date(min);
+  if (max && date > max) return new Date(max);
+  return date;
+}
+
+// The typings only declare `dismiss(mode)`; the JS also takes `design` (it picks the M3 or legacy module).
+const dismissAndroidPicker = DateTimePickerAndroid.dismiss as unknown as (
+  mode: 'date',
+  design?: AndroidDesign
+) => Promise<boolean>;
+
 type DatePickerProps = {
   value?: Date;
   onChange?: (date: Date) => void;
@@ -92,7 +110,10 @@ type DatePickerProps = {
   disabled?: boolean;
   minimumDate?: Date;
   maximumDate?: Date;
+  /** iOS / web only — Android follows the system locale. */
   locale?: string;
+  /** Android dialog: 'material' (M3, default — needs the theme plugin) or 'default' (legacy). */
+  androidDesign?: AndroidDesign;
   className?: string;
 };
 
@@ -107,28 +128,57 @@ function DatePicker({
   minimumDate,
   maximumDate,
   locale,
+  androidDesign = 'material',
   className,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const [draft, setDraft] = React.useState<Date>(value ?? new Date());
   const { colorScheme } = useColorScheme();
+  // Android: the dialog lives outside React — track it so a double tap can't stack a second open()
+  // (the native module never resolves the 2nd promise → focus ring stuck) and so it closes on unmount.
+  const androidOpen = React.useRef(false);
+
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    return () => {
+      if (androidOpen.current) {
+        androidOpen.current = false;
+        dismissAndroidPicker('date', androidDesign).catch(() => {});
+      }
+    };
+  }, [androidDesign]);
 
   function openPicker() {
+    const initial = clampDate(value ?? new Date(), minimumDate, maximumDate);
     if (Platform.OS === 'android') {
+      if (androidOpen.current) return;
+      androidOpen.current = true;
       setOpen(true);
+      const close = () => {
+        androidOpen.current = false;
+        setOpen(false);
+      };
+      // onValueChange / onDismiss / onError — `onChange` is deprecated in v9 and warns in dev.
       DateTimePickerAndroid.open({
-        value: value ?? new Date(),
+        value: initial,
         mode: 'date',
+        design: androidDesign,
+        title: androidDesign === 'material' ? title : undefined,
         minimumDate,
         maximumDate,
-        onChange: (event, date) => {
-          setOpen(false);
-          if (event.type === 'set' && date) onChange?.(date);
+        onValueChange: (_event, date) => {
+          close();
+          onChange?.(date);
+        },
+        onDismiss: close,
+        onError: (error) => {
+          close();
+          console.warn('[DatePicker] Android picker failed to open:', error);
         },
       });
       return;
     }
-    setDraft(value ?? new Date());
+    setDraft(initial);
     setOpen(true);
   }
 
@@ -203,4 +253,5 @@ function DatePicker({
 }
 
 export { DatePicker, DatePickerTrigger, formatDate };
+export type { AndroidDesign as DatePickerAndroidDesign };
 export type { DatePickerProps, DatePickerTriggerProps };

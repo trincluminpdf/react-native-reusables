@@ -11,6 +11,7 @@ Figma is the documentation, this app is the running preview. Every component pag
 | Components (RNR + Lumin deltas, and ◆ custom ones) | `packages/registry/src/nativewind/components/ui/*.tsx` |
 | Native focus ring helper | `packages/registry/src/nativewind/lib/focus-ring.ts` |
 | Colors (light/dark), radius | `apps/showcase/global.css` (+ `lib/theme.ts` for navigation colors) |
+| Android system-dialog theme (Date Picker) | `plugins/withLuminAndroidTheme.js` |
 | Font (Inter, JetBrains Mono) | `tailwind.config.js`, `plugins/interFontPlugin.js`, `hooks/use-lumin-font.tsx` |
 | Component index (status + Figma page id) | `apps/showcase/lib/constants.ts` |
 | Previews (one file per Figma page) | `apps/showcase/examples/*.tsx` |
@@ -32,7 +33,9 @@ Dark `--border` / `--input` are white 10% / 15% in Figma; they are flattened ove
 
 ## Date Picker
 
-The picker is native (`@react-native-community/datetimepicker`): Android opens the Material dialog, iOS shows `display="inline"` inside the ◆ Drawer. The web preview shows ◆ Calendar in the Drawer as a stand-in.
+The picker is native (`@react-native-community/datetimepicker`): Android opens the Material 3 modal date picker (`design: 'material'`), iOS shows `display="inline"` inside the ◆ Drawer. The web preview shows ◆ Calendar in the Drawer as a stand-in.
+
+Android needs `plugins/withLuminAndroidTheme.js` (registered in `app.config.ts`): it switches `AppTheme` to `Theme.Material3.DayNight.NoActionBar` and maps the M3 color roles to Lumin light/dark tokens. Without it the M3 dialog crashes natively. It is native config, so run `pnpm prebuild:android` / rebuild the dev client — Expo Go and OTA updates won't pick it up. `androidDesign="default"` falls back to the legacy dialog.
 
 ## Run
 

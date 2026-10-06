@@ -61,6 +61,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     plugins: [
       'expo-router',
+      // ◆ Material 3 app theme + Lumin colors for native dialogs (Date Picker). Rebuild dev client.
+      './plugins/withLuminAndroidTheme',
       [
         'expo-font',
         {

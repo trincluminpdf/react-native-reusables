@@ -49,6 +49,18 @@ function buildWeeks(month: Date) {
   return weeks;
 }
 
+/**
+ * 2-letter labels ("Su Mo …") like the Figma header. Slicing 'short' collapses some locales
+ * (vi "Th 2…Th 7" → "Th" ×6), so fall back to 'narrow' (vi "T2…T7"), then to the full 'short' form.
+ */
+function weekdayLabels(days: Date[], locale: string) {
+  const short = days.map((d) => d.toLocaleDateString(locale, { weekday: 'short' }));
+  const two = short.map((s) => s.slice(0, 2));
+  if (new Set(two).size === days.length) return two;
+  const narrow = days.map((d) => d.toLocaleDateString(locale, { weekday: 'narrow' }));
+  return new Set(narrow).size === days.length ? narrow : short;
+}
+
 function Calendar(props: CalendarProps) {
   const { className, defaultMonth, disabled, showOutsideDays = true, locale = 'en-US' } = props;
   const initial =
@@ -58,7 +70,7 @@ function Calendar(props: CalendarProps) {
   const [month, setMonth] = React.useState(new Date(initial.getFullYear(), initial.getMonth(), 1));
   const today = startOfDay(new Date());
   const weeks = buildWeeks(month);
-  const weekdays = weeks[0]!.map((d) => d.toLocaleDateString(locale, { weekday: 'short' }).slice(0, 2));
+  const weekdays = weekdayLabels(weeks[0]!, locale);
   const title = month.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 
   function onDayPress(day: Date) {

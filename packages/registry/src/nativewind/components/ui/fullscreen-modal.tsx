@@ -1,6 +1,7 @@
 /**
  * ◆ Lumin NEW — not in RNR. Figma: PDF-Mobile-DS › ◆ Fullscreen Modal. Tokens: 5. Component › fullscreen-modal/*
- * Type=Task (bg-background) for multi-step tasks; Type=Immersive (bg-black, text-white) for viewers/camera.
+ * Type=Task (bg-background) for multi-step tasks; Type=Immersive (bg-black, text-white) for viewers/camera
+ * — Immersive also switches the system status bar to light icons while open.
  * Close (X) top-leading, Done/Save top-trailing (Apple HIG). Confirm before closing with unsaved changes.
  *
  * In an Expo Router app prefer a route with `presentation: "fullScreenModal"` and render
@@ -15,7 +16,7 @@ import { cn } from '@/registry/nativewind/lib/utils';
 import * as DialogPrimitive from '@rn-primitives/dialog';
 import { XIcon } from 'phosphor-react-native';
 import * as React from 'react';
-import { Platform, View, type ViewProps } from 'react-native';
+import { Platform, StatusBar, View, type ViewProps } from 'react-native';
 import { ReduceMotion, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
 
@@ -63,6 +64,12 @@ function FullscreenModalContent({
                     className
                   )}
                   {...props}>
+                  {/* System status bar sits over the modal (pt-safe): Immersive is always black, so force
+                      light icons — the app-level <StatusBar> follows the theme and left them dark (invisible)
+                      in light mode. Pushed on the RN StatusBar stack, popped on close. */}
+                  {immersive && Platform.OS !== 'web' ? (
+                    <StatusBar barStyle="light-content" animated />
+                  ) : null}
                   <>{children}</>
                 </DialogPrimitive.Content>
               </TextClassContext.Provider>

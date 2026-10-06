@@ -9,7 +9,7 @@ import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { MinusIcon } from 'phosphor-react-native';
 import * as React from 'react';
-import { Animated, Platform, Pressable, TextInput, View, type ViewProps } from 'react-native';
+import { Animated, Keyboard, Platform, Pressable, TextInput, View, type ViewProps } from 'react-native';
 
 type OTPContextValue = {
   value: string;
@@ -59,6 +59,27 @@ function InputOTP({
   const [focused, setFocused] = React.useState(false);
   const inputRef = React.useRef<TextInput>(null);
 
+  // Android: the system Back key hides the keyboard but leaves the TextInput focused, so the active
+  // slot ring/caret stayed on and focus() was a no-op (keyboard would not come back). Blur on hide.
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const sub = Keyboard.addListener('keyboardDidHide', () => {
+      if (inputRef.current?.isFocused()) inputRef.current.blur();
+    });
+    return () => sub.remove();
+  }, []);
+
+  function focusInput() {
+    const input = inputRef.current;
+    if (!input) return;
+    if (Platform.OS === 'android' && input.isFocused() && !Keyboard.isVisible()) {
+      input.blur();
+      requestAnimationFrame(() => input.focus());
+      return;
+    }
+    input.focus();
+  }
+
   function handleChange(text: string) {
     const next = text.slice(0, maxLength);
     if (!pattern.test(next)) return;
@@ -71,7 +92,7 @@ function InputOTP({
     <OTPContext.Provider value={{ value, maxLength, focused, invalid, disabled }}>
       <Pressable
         className={cn('relative flex-row items-center gap-2', disabled && 'opacity-50', className)}
-        onPress={() => inputRef.current?.focus()}
+        onPress={focusInput}
         disabled={disabled}
         accessibilityLabel="One-time code">
         {children}
