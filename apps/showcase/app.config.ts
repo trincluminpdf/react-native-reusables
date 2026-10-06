@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       url: 'https://u.expo.dev/ceb86f7d-1fed-4feb-98cb-2f2ba6223741',
     },
     splash: {
-      image: './assets/images/splash.png',
+      image: './assets/images/splash.png', // ◆ white Lumin mark (Figma LPA-001 › V3d), ~35% width
       resizeMode: 'contain',
       backgroundColor: '#0A0A0A',
     },
