@@ -1,6 +1,7 @@
 import { Button } from '@/registry/nativewind/components/ui/button';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
+import { LuminLogo } from '@showcase/components/lumin-logo';
 import { persistWebTheme } from '@showcase/hooks/use-web-color-scheme-sync';
 import { getComponent } from '@showcase/lib/constants';
 import { isShellFrame } from '@showcase/lib/desktop-frame';
@@ -15,10 +16,11 @@ import {
 } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const APP_TITLE = 'Lumin PDF Mobile DS';
+/** Shown next to the Lumin logo on Home, so it drops the word "Lumin". */
+const APP_TITLE = 'PDF Mobile DS';
 const INSTALL_HINT_KEY = 'lumin-ds-install-hint-dismissed';
 
 type FullscreenDoc = Document & {
@@ -107,7 +109,8 @@ async function toggleFullscreen() {
 
 /**
  * Web-only top bar for testing the showcase on a real phone browser:
- * back button, current component name, fullscreen toggle and light/dark toggle.
+ * Home: Lumin logo (tap = reload home) + "PDF Mobile DS"; other pages: Back + component name.
+ * Right side: fullscreen toggle and light/dark toggle.
  * Hidden when embedded in an iframe (docs previews) — except inside the desktop shell's phone
  * frame, where it acts as the app's nav bar (Back + title; theme is driven by the shell).
  */
@@ -129,6 +132,12 @@ export function WebMobileBar() {
     else router.replace('/');
   }
 
+  // Logo = home, with a fresh page load (also resets the list to the top).
+  function onLogo() {
+    vibrate();
+    window.location.assign('/');
+  }
+
   function onToggleTheme() {
     vibrate();
     const next = colorScheme === 'dark' ? 'light' : 'dark';
@@ -141,22 +150,38 @@ export function WebMobileBar() {
       <View
         className="bg-background border-border flex-row items-center border-b px-2"
         style={{ paddingTop: insets.top, minHeight: 52 + insets.top }}>
-        <View className="w-24 flex-row items-center">
-          {!isHome && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 flex-row gap-0.5 px-2"
-              onPress={onBack}
-              accessibilityLabel="Back">
-              <Icon as={ChevronLeftIcon} className="size-5" />
-              <Text className="text-base font-normal">Back</Text>
-            </Button>
-          )}
-        </View>
-        <Text className="flex-1 text-center text-base font-semibold" numberOfLines={1}>
-          {toTitle(pathname)}
-        </Text>
+        {isHome ? (
+          <View className="min-w-0 flex-1 flex-row items-center gap-2 pl-2">
+            <Pressable
+              onPress={onLogo}
+              accessibilityRole="link"
+              accessibilityLabel="Lumin — reload home"
+              hitSlop={8}
+              className="web:cursor-pointer active:opacity-60">
+              <LuminLogo height={18} color={colorScheme === 'dark' ? '#fafafa' : '#0a0a0a'} />
+            </Pressable>
+            <Text className="flex-1 text-base font-semibold" numberOfLines={1}>
+              {APP_TITLE}
+            </Text>
+          </View>
+        ) : (
+          <>
+            <View className="w-24 flex-row items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 flex-row gap-0.5 px-2"
+                onPress={onBack}
+                accessibilityLabel="Back">
+                <Icon as={ChevronLeftIcon} className="size-5" />
+                <Text className="text-base font-normal">Back</Text>
+              </Button>
+            </View>
+            <Text className="flex-1 text-center text-base font-semibold" numberOfLines={1}>
+              {toTitle(pathname)}
+            </Text>
+          </>
+        )}
         <View className="w-24 flex-row items-center justify-end">
           {chrome && client.canFullscreen && !client.standalone && (
             <Button

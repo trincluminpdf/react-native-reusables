@@ -4,21 +4,56 @@ import { Input } from '@/registry/nativewind/components/ui/input';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { useScrollToTop } from 'expo-router/react-navigation';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { BLOCKS, COMPONENTS } from '@showcase/lib/constants';
-import { Link, type Href } from 'expo-router';
+import { Link, useFocusEffect, type Href } from 'expo-router';
 import { CaretRightIcon } from 'phosphor-react-native';
 import type { ComponentStatus } from '@showcase/lib/constants';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 
+/**
+ * Web: the browser drops the list's scroll position while Home is hidden behind a component
+ * page (and reports a scroll to 0 when it comes back), so remember the offset and put it back
+ * when Home is focused again (Back). A full reload (logo) starts at the top — memory only.
+ */
+let savedScrollY = 0;
+
 export default function ComponentsScreen() {
   const [search, setSearch] = React.useState('');
   const [isAtTop, setIsAtTop] = React.useState(true);
   const isAtTopRef = React.useRef(true);
-  const flashListRef = React.useRef(null);
+  const flashListRef = React.useRef<FlashListRef<(typeof COMPONENTS)[number]>>(null);
+  const isFocusedRef = React.useRef(true);
+  const restoreTargetRef = React.useRef<number | null>(null);
   useScrollToTop(flashListRef);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      isFocusedRef.current = true;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      if (Platform.OS === 'web' && savedScrollY > 0) {
+        const target = savedScrollY;
+        restoreTargetRef.current = target;
+        let tries = 0;
+        // The list is re-shown and re-measured over a few frames; retry until it sticks.
+        const attempt = () => {
+          if (restoreTargetRef.current === null) return;
+          flashListRef.current?.scrollToOffset({ offset: target, animated: false });
+          tries += 1;
+          if (tries < 40) timer = setTimeout(attempt, 50);
+          else restoreTargetRef.current = null;
+        };
+        attempt();
+      }
+      return () => {
+        isFocusedRef.current = false;
+        restoreTargetRef.current = null;
+        if (timer) clearTimeout(timer);
+      };
+    }, [])
+  );
 
   const data = !search
     ? COMPONENTS
@@ -33,15 +68,22 @@ export default function ComponentsScreen() {
       <FlashList
         ref={flashListRef}
         data={data}
-        onScroll={Platform.select({
-          android: ({ nativeEvent }) => {
-            const isScrollAtTop = nativeEvent.contentOffset.y <= 0;
+        onScroll={({ nativeEvent }) => {
+          const y = nativeEvent.contentOffset.y;
+          if (Platform.OS === 'web' && isFocusedRef.current) {
+            const target = restoreTargetRef.current;
+            if (target === null) savedScrollY = y;
+            else if (Math.abs(y - target) < 2) restoreTargetRef.current = null;
+          }
+          if (Platform.OS === 'android') {
+            const isScrollAtTop = y <= 0;
             if (isScrollAtTop !== isAtTopRef.current) {
               isAtTopRef.current = isScrollAtTop;
               setIsAtTop(isScrollAtTop);
             }
-          },
-        })}
+          }
+        }}
+        scrollEventThrottle={16}
         scrollToOverflowEnabled={Platform.OS === 'ios'}
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="px-4 pb-2"

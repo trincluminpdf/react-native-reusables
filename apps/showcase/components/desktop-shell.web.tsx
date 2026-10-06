@@ -2,6 +2,7 @@ import { Button } from '@/registry/nativewind/components/ui/button';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Input } from '@/registry/nativewind/components/ui/input';
 import { Text } from '@/registry/nativewind/components/ui/text';
+import { LuminLogo } from '@showcase/components/lumin-logo';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { persistWebTheme } from '@showcase/hooks/use-web-color-scheme-sync';
 import {
@@ -97,7 +98,7 @@ export function DesktopShell() {
 
   return (
     <View className="bg-background absolute inset-0 flex-row">
-      <Sidebar active={path} onSelect={navigate} />
+      <Sidebar active={path} onSelect={navigate} isDark={isDark} />
       <View className="bg-muted/50 dark:bg-muted/30 min-w-0 flex-1">
         <View
           className="bg-background border-border flex-row items-center gap-2 border-b px-5"
@@ -146,7 +147,15 @@ export function DesktopShell() {
   );
 }
 
-function Sidebar({ active, onSelect }: { active: string; onSelect: (path: string) => void }) {
+function Sidebar({
+  active,
+  onSelect,
+  isDark,
+}: {
+  active: string;
+  onSelect: (path: string) => void;
+  isDark: boolean;
+}) {
   const [search, setSearch] = React.useState('');
   const query = search.trim().toLowerCase();
   const items = query ? COMPONENTS.filter((c) => c.name.toLowerCase().includes(query)) : COMPONENTS;
@@ -158,17 +167,13 @@ function Sidebar({ active, onSelect }: { active: string; onSelect: (path: string
         className="flex-row items-center gap-3 px-4 pb-3 pt-4"
         accessibilityRole="link"
         accessibilityLabel="All components">
-        <img
-          src="/favicon.svg"
-          alt=""
-          width={32}
-          height={32}
-          style={{ borderRadius: 8, boxShadow: '0 0 0 1px rgba(0,0,0,0.08)' }}
-        />
-        <View className="min-w-0 flex-1">
-          <Text className="text-sm font-semibold" numberOfLines={1}>
-            Lumin PDF Mobile DS
-          </Text>
+        <View className="min-w-0 flex-1 gap-1">
+          <View className="flex-row items-center gap-2">
+            <LuminLogo height={18} color={isDark ? '#fafafa' : '#0a0a0a'} />
+            <Text className="text-sm font-semibold" numberOfLines={1}>
+              PDF Mobile DS
+            </Text>
+          </View>
           <Text className="text-muted-foreground text-xs" numberOfLines={1}>
             {COMPONENTS.length} components
           </Text>
