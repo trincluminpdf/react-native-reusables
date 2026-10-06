@@ -1,3 +1,6 @@
+/**
+ * RNR Toggle (Figma: PDF-Mobile-DS › Toggle, tokens toggle/*). Sizes = RNR. ◆ only: no shadow on outline.
+ */
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
@@ -18,7 +21,8 @@ const toggleVariants = cva(
       variant: {
         default: 'bg-transparent',
         outline: cn(
-          'border-input active:bg-accent border bg-transparent shadow-sm shadow-black/5',
+          // ◆ Lumin: no shadow; bg-background (toggle/bg/outline-default)
+          'border-input active:bg-accent bg-background dark:bg-input/30 border',
           Platform.select({
             web: 'hover:bg-accent hover:text-accent-foreground',
           })

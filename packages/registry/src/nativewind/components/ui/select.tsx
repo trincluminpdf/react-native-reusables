@@ -1,9 +1,16 @@
+// ◆ Lumin: icons are Phosphor (DS-002) instead of Lucide.
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { NativeOnlyAnimatedView } from '@/registry/nativewind/components/ui/native-only-animated-view';
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
+import { useFocusRing } from '@/registry/nativewind/lib/focus-ring';
 import { cn } from '@/registry/nativewind/lib/utils';
 import * as SelectPrimitive from '@rn-primitives/select';
-import { Check, ChevronDown, ChevronDownIcon, ChevronUpIcon } from 'lucide-react-native';
+import {
+  CaretDownIcon as ChevronDown,
+  CaretDownIcon as ChevronDownIcon,
+  CaretUpIcon as ChevronUpIcon,
+  CheckIcon as Check,
+} from 'phosphor-react-native';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { FadeIn, FadeOut, ReduceMotion } from 'react-native-reanimated';
@@ -36,28 +43,42 @@ function SelectValue({
   );
 }
 
+/**
+ * ◆ Lumin deltas (Figma: PDF-Mobile-DS › Select, tokens select/*):
+ * - Focus / Filled (Focus) ring on the trigger while the menu is open — RNR rings are web-only.
+ * - Invalid (aria-invalid) styled on native too. No shadow. Icons are Phosphor.
+ * - Menu item Checkbox variant + Description line are compositions (see showcase).
+ */
 function SelectTrigger({
   ref,
   className,
   children,
   size = 'default',
+  style,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
-    children?: React.ReactNode;
-    size?: 'default' | 'sm';
-  }) {
+  children?: React.ReactNode;
+  size?: 'default' | 'sm';
+  'aria-invalid'?: boolean;
+}) {
+  const { open } = SelectPrimitive.useRootContext();
+  const invalid = !!props['aria-invalid'];
+  const ring = useFocusRing({ invalid, forceFocused: open });
   return (
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'border-input dark:bg-input/30 dark:active:bg-input/50 bg-background flex h-10 flex-row items-center justify-between gap-2 rounded-md border px-3 py-2 shadow-sm shadow-black/5 sm:h-9',
+        'border-input dark:bg-input/30 dark:active:bg-input/50 bg-background flex h-10 flex-row items-center justify-between gap-2 rounded-md border px-3 py-2 sm:h-9',
         Platform.select({
-          web: 'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-input/50 w-fit whitespace-nowrap text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0',
+          web: 'focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:ring-[3px] dark:hover:bg-input/50 w-fit whitespace-nowrap text-sm outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0',
         }),
+        open && cn('border-ring', Platform.select({ web: 'ring-ring/50 ring-[3px]' })),
+        invalid && 'border-destructive',
         props.disabled && 'opacity-50',
         size === 'sm' && 'h-8 py-2 sm:py-1.5',
         className
       )}
+      style={[ring.style, style as object]}
       {...props}>
       <>{children}</>
       <Icon as={ChevronDown} aria-hidden={true} className="text-muted-foreground size-4" />

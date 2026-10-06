@@ -1,8 +1,9 @@
+// ◆ Lumin: icons are Phosphor (DS-002) instead of Lucide.
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import * as AccordionPrimitive from '@rn-primitives/accordion';
-import { ChevronDown } from 'lucide-react-native';
+import { CaretDownIcon as ChevronDown } from 'phosphor-react-native';
 import { Platform, Pressable, View } from 'react-native';
 import Animated, {
   FadeOutUp,
@@ -14,19 +15,31 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+/**
+ * ◆ Lumin deltas (Figma: PDF-Mobile-DS › Accordion, tokens accordion/*):
+ * 1. variant="border" (boxed: rounded-lg border px-4) — Lumin-only; RNR is the Basic style.
+ * 2. No hover/focus (RNR trigger has no native pressed style). Icon is Phosphor CaretDown.
+ */
 function Accordion({
   children,
   ref,
+  variant = 'basic',
+  className,
   ...props
-}: Omit<React.ComponentProps<typeof AccordionPrimitive.Root>, 'asChild'>) {
+}: Omit<React.ComponentProps<typeof AccordionPrimitive.Root>, 'asChild'> & {
+  variant?: 'basic' | 'border';
+  className?: string;
+}) {
   return (
-    <LayoutAnimationConfig skipEntering>
-      <AccordionPrimitive.Root
-        {...(props as AccordionPrimitive.RootProps)}
-        asChild={Platform.OS !== 'web'}>
-        <Animated.View layout={LinearTransition.duration(200)}>{children}</Animated.View>
-      </AccordionPrimitive.Root>
-    </LayoutAnimationConfig>
+    <View className={cn(variant === 'border' && 'border-border rounded-lg border px-4', className)}>
+      <LayoutAnimationConfig skipEntering>
+        <AccordionPrimitive.Root
+          {...(props as AccordionPrimitive.RootProps)}
+          asChild={Platform.OS !== 'web'}>
+          <Animated.View layout={LinearTransition.duration(200)}>{children}</Animated.View>
+        </AccordionPrimitive.Root>
+      </LayoutAnimationConfig>
+    </View>
   );
 }
 

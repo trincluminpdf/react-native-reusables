@@ -1,9 +1,15 @@
+// ◆ Lumin: icons are Phosphor (DS-002) instead of Lucide.
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { NativeOnlyAnimatedView } from '@/registry/nativewind/components/ui/native-only-animated-view';
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import * as ContextMenuPrimitive from '@rn-primitives/context-menu';
-import { Check, ChevronDown, ChevronRight, ChevronUp } from 'lucide-react-native';
+import {
+  CaretDownIcon as ChevronDown,
+  CaretRightIcon as ChevronRight,
+  CaretUpIcon as ChevronUp,
+  CheckIcon as Check,
+} from 'phosphor-react-native';
 import * as React from 'react';
 import {
   Platform,

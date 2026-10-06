@@ -1,5 +1,5 @@
 const { hairlineWidth } = require('nativewind/theme');
-const geistFontPlugin = require('./plugins/geistFontPlugin.js');
+const interFontPlugin = require('./plugins/interFontPlugin.js');
 const { platformSelect } = require('nativewind/theme');
 
 /** @type {import('tailwindcss').Config} */
@@ -8,13 +8,16 @@ module.exports = {
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
+    './examples/**/*.{ts,tsx}',
     './node_modules/@rnr/**/*.{ts,tsx}',
   ],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      // Lumin DS text styles use Inter (DS-shadcn-000 › text-*/…); code uses JetBrains Mono.
       fontFamily: {
-        sans: ['Geist'],
+        sans: ['Inter'],
+        mono: ['JetBrains Mono'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -52,6 +55,7 @@ module.exports = {
         },
       },
       borderRadius: {
+        xl: 'calc(var(--radius) + 4px)',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
@@ -79,7 +83,7 @@ module.exports = {
     hoverOnlyWhenSupported: true,
   },
   plugins: [
-    platformSelect({ native: geistFontPlugin, default: [] }),
+    platformSelect({ native: interFontPlugin, default: [] }),
     require('tailwindcss-animate'),
   ],
 };

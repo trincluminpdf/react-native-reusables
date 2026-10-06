@@ -3,9 +3,10 @@ import '../global.css';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { ThemeProvider } from 'expo-router/react-navigation';
 import { PortalHost } from '@rn-primitives/portal';
+import { Toaster } from '@/registry/nativewind/components/ui/sonner';
 import { HeaderRightView } from '@showcase/components/header-right-view';
 import { WebMobileBar } from '@showcase/components/web-mobile-bar';
-import { useGeistFont } from '@showcase/hooks/use-geist-font';
+import { useLuminFont } from '@showcase/hooks/use-lumin-font';
 import { useWebColorSchemeSync } from '@showcase/hooks/use-web-color-scheme-sync';
 import { NAV_THEME } from '@showcase/lib/theme';
 import { Stack } from 'expo-router';
@@ -30,7 +31,7 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const [loaded, error] = useGeistFont();
+  const [loaded, error] = useLuminFont();
   const { colorScheme } = useColorScheme();
   useWebColorSchemeSync();
 
@@ -68,7 +69,7 @@ export default function RootLayout() {
               name="index"
               options={{
                 headerLargeTitle: true,
-                headerTitle: 'Showcase',
+                headerTitle: 'Lumin DS',
                 headerLargeTitleShadowVisible: false,
                 headerShadowVisible: false,
                 headerTransparent: Platform.OS === 'ios',
@@ -76,6 +77,7 @@ export default function RootLayout() {
             />
           </Stack>
           <PortalHost />
+          <Toaster />
         </KeyboardProvider>
       </GestureHandlerRootView>
     </ThemeProvider>

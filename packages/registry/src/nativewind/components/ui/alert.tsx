@@ -1,7 +1,11 @@
-import { Icon } from '@/registry/nativewind/components/ui/icon';
+/**
+ * RNR Alert + ◆ Lumin deltas (Figma: PDF-Mobile-DS › Alert, tokens alert/*):
+ * 1. AlertAction — action Button inside the alert (top-right). Lumin-only.
+ * 2. Title / Description / Icon are optional children (Figma show/hide toggles).
+ */
+import { Icon, type IconComponent } from '@/registry/nativewind/components/ui/icon';
 import { Text, TextClassContext } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
-import type { LucideIcon } from 'lucide-react-native';
 import * as React from 'react';
 import { View } from 'react-native';
 
@@ -13,7 +17,7 @@ function Alert({
   iconClassName,
   ...props
 }: React.ComponentProps<typeof View> & React.RefAttributes<View> & {
-  icon: LucideIcon;
+  icon?: IconComponent;
   variant?: 'default' | 'destructive';
   iconClassName?: string;
 }) {
@@ -31,12 +35,14 @@ function Alert({
           className
         )}
         {...props}>
-        <View className="absolute left-3.5 top-3">
-          <Icon
-            as={icon}
-            className={cn('size-4', variant === 'destructive' && 'text-destructive', iconClassName)}
-          />
-        </View>
+        {icon ? (
+          <View className="absolute left-3.5 top-3">
+            <Icon
+              as={icon}
+              className={cn('size-4', variant === 'destructive' && 'text-destructive', iconClassName)}
+            />
+          </View>
+        ) : null}
         {children}
       </View>
     </TextClassContext.Provider>
@@ -72,4 +78,9 @@ function AlertDescription({
   );
 }
 
-export { Alert, AlertDescription, AlertTitle };
+/** ◆ Lumin: action slot (e.g. <Button size="sm" variant="outline">) pinned top-right. Give the title pr-20. */
+function AlertAction({ className, ...props }: React.ComponentProps<typeof View>) {
+  return <View className={cn('absolute right-3 top-2.5', className)} {...props} />;
+}
+
+export { Alert, AlertAction, AlertDescription, AlertTitle };

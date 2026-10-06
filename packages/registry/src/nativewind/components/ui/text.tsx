@@ -1,3 +1,7 @@
+/**
+ * RNR Text + ◆ Lumin deltas (Figma: PDF-Mobile-DS › Typography): Large/Small weights follow
+ * Lumin text styles; Blockquote pl-3 (Tablet sm:pl-6); List is a composition (TypographyList).
+ */
 import { cn } from '@/registry/nativewind/lib/utils';
 import { Slot } from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -31,8 +35,9 @@ const textVariants = cva(
           'bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold'
         ),
         lead: 'text-muted-foreground text-xl',
-        large: 'text-lg font-semibold',
-        small: 'text-sm font-medium leading-none',
+        // ◆ Lumin text styles: Large = medium (RNR semibold), Small = normal (RNR medium)
+        large: 'text-lg font-medium',
+        small: 'text-sm font-normal leading-none',
         muted: 'text-muted-foreground text-sm',
       },
     },

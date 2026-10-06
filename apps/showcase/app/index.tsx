@@ -7,7 +7,9 @@ import { useScrollToTop } from 'expo-router/react-navigation';
 import { FlashList } from '@shopify/flash-list';
 import { BLOCKS, COMPONENTS } from '@showcase/lib/constants';
 import { Link, type Href } from 'expo-router';
-import { ChevronRight } from 'lucide-react-native';
+import { CaretRightIcon } from 'phosphor-react-native';
+import { StatusChip } from '@showcase/components/spec';
+import type { ComponentStatus } from '@showcase/lib/constants';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
@@ -65,6 +67,7 @@ export default function ComponentsScreen() {
           <ListItem
             href={`/components/${item.slug}`}
             name={item.name}
+            status={item.status}
             isFirst={index === 0}
             isLast={index === data.length - 1}
           />
@@ -103,11 +106,12 @@ function SectionTitle({ children }: { children: string }) {
 type ListItemProps = {
   href: Href;
   name: string;
+  status?: ComponentStatus;
   isFirst: boolean;
   isLast: boolean;
 };
 
-function ListItem({ href, name, isFirst, isLast }: ListItemProps) {
+function ListItem({ href, name, status, isFirst, isLast }: ListItemProps) {
   const { colorScheme } = useColorScheme();
   return (
     <Link href={href} asChild>
@@ -121,8 +125,16 @@ function ListItem({ href, name, isFirst, isLast }: ListItemProps) {
             isFirst && 'rounded-t-lg',
             isLast && 'rounded-b-lg border-b'
           )}>
-          <Text className="text-base font-normal">{name}</Text>
-          <Icon as={ChevronRight} className="text-muted-foreground size-4 stroke-[1.5px]" />
+          <Text className="text-base font-normal">
+            {status === 'Custom' || status === 'New' ? (
+              <Text className="text-sm text-violet-600 dark:text-violet-400">◆ </Text>
+            ) : null}
+            {name}
+          </Text>
+          <View className="flex-row items-center gap-2">
+            {status ? <StatusChip status={status} /> : null}
+            <Icon as={CaretRightIcon} className="text-muted-foreground size-4" />
+          </View>
         </Button>
       </Link.Trigger>
       <Link.Preview style={{ backgroundColor: colorScheme === 'dark' ? 'black' : 'white' }} />

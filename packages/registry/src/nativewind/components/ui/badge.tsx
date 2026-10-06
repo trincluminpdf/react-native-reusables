@@ -1,3 +1,11 @@
+/**
+ * RNR Badge + ◆ Lumin deltas (Figma: PDF-Mobile-DS › Badge, tokens badge/*, badge-number/*):
+ * 1. variant="verified" and "ghost" — not in RNR.
+ * 2. destructive is the Lumin soft style (bg-destructive/10 + text-destructive).
+ * 3. Icons: compose <Icon size={12} /> inside (left/right).
+ * 4. ◆ BadgeNumber — count pill (h-5, min-w-5, px-1) used in Tabs.
+ * Badges are not pressable on mobile (no hover/focus states).
+ */
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { Slot } from '@rn-primitives/slot';
@@ -14,19 +22,14 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: cn(
-          'bg-primary border-transparent',
-          Platform.select({ web: '[a&]:hover:bg-primary/90' })
-        ),
-        secondary: cn(
-          'bg-secondary border-transparent',
-          Platform.select({ web: '[a&]:hover:bg-secondary/90' })
-        ),
-        destructive: cn(
-          'bg-destructive border-transparent',
-          Platform.select({ web: '[a&]:hover:bg-destructive/90' })
-        ),
-        outline: Platform.select({ web: '[a&]:hover:bg-accent [a&]:hover:text-accent-foreground' }),
+        default: 'bg-primary border-transparent',
+        secondary: 'bg-secondary border-transparent',
+        destructive: 'bg-destructive/10 dark:bg-destructive/20 border-transparent',
+        outline: 'bg-background border-border',
+        // ◆ Lumin
+        verified: 'border-transparent bg-blue-500 dark:bg-blue-600',
+        // ◆ Lumin
+        ghost: 'border-transparent bg-transparent',
       },
     },
     defaultVariants: {
@@ -40,8 +43,10 @@ const badgeTextVariants = cva('text-xs font-medium', {
     variant: {
       default: 'text-primary-foreground',
       secondary: 'text-secondary-foreground',
-      destructive: 'text-white',
+      destructive: 'text-destructive',
       outline: 'text-foreground',
+      verified: 'text-white',
+      ghost: 'text-foreground',
     },
   },
   defaultVariants: {
@@ -49,9 +54,10 @@ const badgeTextVariants = cva('text-xs font-medium', {
   },
 });
 
-type BadgeProps = React.ComponentProps<typeof View> & React.RefAttributes<View> & {
-  asChild?: boolean;
-} & VariantProps<typeof badgeVariants>;
+type BadgeProps = React.ComponentProps<typeof View> &
+  React.RefAttributes<View> & {
+    asChild?: boolean;
+  } & VariantProps<typeof badgeVariants>;
 
 function Badge({ className, variant, asChild, ...props }: BadgeProps) {
   const Component = asChild ? Slot : View;
@@ -62,5 +68,14 @@ function Badge({ className, variant, asChild, ...props }: BadgeProps) {
   );
 }
 
-export { Badge, badgeTextVariants, badgeVariants };
-export type { BadgeProps };
+type BadgeNumberProps = Omit<BadgeProps, 'variant'> & {
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
+};
+
+/** ◆ Lumin: count pill (badge-number/*): h-5 min-w-5 px-1 rounded-full. */
+function BadgeNumber({ className, variant, ...props }: BadgeNumberProps) {
+  return <Badge variant={variant} className={cn('h-5 min-w-5 px-1 py-0', className)} {...props} />;
+}
+
+export { Badge, BadgeNumber, badgeTextVariants, badgeVariants };
+export type { BadgeNumberProps, BadgeProps };

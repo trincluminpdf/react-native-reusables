@@ -2,6 +2,7 @@ import { Button } from '@/registry/nativewind/components/ui/button';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { persistWebTheme } from '@showcase/hooks/use-web-color-scheme-sync';
+import { getComponent } from '@showcase/lib/constants';
 import { router, usePathname } from 'expo-router';
 import {
   ChevronLeftIcon,
@@ -35,6 +36,8 @@ function vibrate() {
 function toTitle(pathname: string) {
   const last = pathname.split('/').filter(Boolean).pop();
   if (!last) return APP_TITLE;
+  const meta = getComponent(last);
+  if (meta) return meta.name;
   return last
     .split('-')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))

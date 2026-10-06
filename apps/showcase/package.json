@@ -27,7 +27,9 @@
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
   },
   "dependencies": {
-    "@expo-google-fonts/geist": "^0.4.0",
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/jetbrains-mono": "^0.4.1",
+    "@react-native-community/datetimepicker": "9.1.0",
     "@rn-primitives/aspect-ratio": "1.5.2",
     "@rn-primitives/collapsible": "1.5.2",
     "@rn-primitives/label": "1.5.2",
@@ -53,6 +55,7 @@
     "expo-updates": "~56.0.19",
     "lucide-react-native": "^1.21.0",
     "nativewind": "^4.2.2",
+    "phosphor-react-native": "3.0.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",

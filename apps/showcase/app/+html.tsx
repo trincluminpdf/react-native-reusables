@@ -77,11 +77,11 @@ export default function Root({ children }: PropsWithChildren) {
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: mobileCss }} />
 
-        {/* Geist on web (the docs site loads the same font via next/font) */}
+        {/* Lumin DS fonts on web: Inter (text styles) + JetBrains Mono (code) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@400&display=swap"
           rel="stylesheet"
         />
       </head>
