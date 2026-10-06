@@ -340,7 +340,7 @@ function StatusBar() {
   );
 }
 
-function SidePanel({ url, figma }: { url: string; figma: string }) {
+function SidePanel({ url, figma }: { url: string; figma: string | null }) {
   const [copied, setCopied] = React.useState(false);
   React.useEffect(() => setCopied(false), [url]);
 
@@ -397,13 +397,17 @@ function SidePanel({ url, figma }: { url: string; figma: string }) {
 
       <View className="gap-3">
         <Text className="text-sm font-semibold">Design</Text>
-        <Button
-          variant="outline"
-          className="flex-row justify-between"
-          onPress={() => window.open(figma, '_blank', 'noopener')}>
-          <Text>Open in Figma</Text>
-          <Icon as={ArrowSquareOutIcon} className="text-muted-foreground size-4" />
-        </Button>
+        {figma ? (
+          <Button
+            variant="outline"
+            className="flex-row justify-between"
+            onPress={() => window.open(figma, '_blank', 'noopener')}>
+            <Text>Open in Figma</Text>
+            <Icon as={ArrowSquareOutIcon} className="text-muted-foreground size-4" />
+          </Button>
+        ) : (
+          <Text className="text-muted-foreground text-sm">Code only — no Figma page for this one.</Text>
+        )}
         <Text className="text-muted-foreground text-xs leading-5">
           The frame shows the phone layout (Mode = Mobile, 390 wide). Click acts as tap; scroll with
           the trackpad or mouse wheel.

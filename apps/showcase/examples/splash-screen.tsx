@@ -56,7 +56,7 @@ function Default() {
           <SplashThumb />
         </View>
       </Spec>
-      <Spec label="Launch: app icon → splash → first screen. Web: same screen until the app is ready">
+      <Spec label="Launch: app icon → splash → first screen. Web boot shows ◆ Loader instead">
         <Button variant="outline" onPress={() => setOpen(true)}>
           <Text>Replay splash</Text>
         </Button>

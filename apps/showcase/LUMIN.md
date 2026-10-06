@@ -41,6 +41,16 @@ Values come from DS-shadcn-000 › `3. Mode` (Light / Dark) and `1. TailwindCSS`
 
 Dark `--border` / `--input` are white 10% / 15% in Figma; they are flattened over the background here because Tailwind opacity modifiers need opaque HSL variables.
 
+## Loader (code only)
+
+◆ Loader is the Lumin brand loader, variant **Lumin** only (source: "Lumin animated loaders 2" › `snippets/lumin-loader.html`). It has no PDF-Mobile-DS page, so its `figma` is empty in `lib/constants.ts` and the page shows "Code only" instead of a Figma link.
+
+- `packages/registry/src/nativewind/components/ui/loader.tsx` — `Loader` (default 48px, #191C1D / foreground in dark, `className` or `color` to tint) and `LoaderScreen` (fills its parent on bg-background, optional `label`, fades in after 150ms).
+- `packages/registry/src/nativewind/lib/lumin-loader-motion.ts` — path + keyframes **generated** from the snippet; regenerate rather than hand-edit.
+- Web renders the snippet SVG + CSS as-is; native animates the same stops with Reanimated. Reduced motion shows the static mark.
+- The web boot screen (`app/+html.tsx`) uses the same loader (64px) on the saved theme's background until the app is ready.
+- Use it for app launch / opening a whole file; inline and button loading stay on ◆ Spinner.
+
 ## Date Picker
 
 The picker is native (`@react-native-community/datetimepicker`): Android opens the Material 3 modal date picker (`design: 'material'`), iOS shows `display="inline"` inside the ◆ Drawer. The web preview shows ◆ Calendar in the Drawer as a stand-in.

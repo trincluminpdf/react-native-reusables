@@ -33,6 +33,8 @@ export const COMPONENTS = [
   { slug: 'input-otp', name: 'Input OTP', figma: '6-24', status: 'Custom' },
   { slug: 'item', name: 'Item', figma: '6-25', status: 'Custom' },
   { slug: 'label', name: 'Label', figma: '6-26', status: 'RNR + Custom' },
+  // ◆ Code only: Lumin brand loader (variant Lumin) — no PDF-Mobile-DS page, `figma` stays empty.
+  { slug: 'loader', name: 'Loader', figma: '', status: 'Custom' },
   { slug: 'popover', name: 'Popover', figma: '6-27', status: 'RNR' },
   { slug: 'progress', name: 'Progress', figma: '6-28', status: 'RNR' },
   { slug: 'radio-group', name: 'Radio Group', figma: '6-29', status: 'RNR + Custom' },
@@ -61,6 +63,7 @@ export const COMPONENTS = [
 ] as const satisfies ReadonlyArray<{
   slug: string;
   name: string;
+  /** Figma node id; '' = code-only component (no Figma page). */
   figma: string;
   /** Figma file the `figma` node lives in, when it is not PDF-Mobile-DS. */
   figmaFile?: string;
@@ -75,7 +78,7 @@ export function figmaUrl(nodeId: string, file: string = FIGMA_FILE_URL) {
 
 /** Figma link for a component entry (handles entries that live outside PDF-Mobile-DS). */
 export function componentFigmaUrl(meta: { figma: string; figmaFile?: string }) {
-  return figmaUrl(meta.figma, meta.figmaFile);
+  return meta.figma ? figmaUrl(meta.figma, meta.figmaFile) : null;
 }
 
 export function getComponent(slug: string) {

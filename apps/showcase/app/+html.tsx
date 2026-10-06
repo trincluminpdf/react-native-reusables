@@ -1,5 +1,13 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
-import { LUMIN_MARK_PATH, LUMIN_MARK_VIEWBOX, SPLASH } from '@showcase/lib/lumin-mark';
+import {
+  LUMIN_LOADER_COLOR,
+  LUMIN_LOADER_DURATION_MS,
+  LUMIN_LOADER_KEYFRAMES_CSS,
+  LUMIN_LOADER_PATH,
+  LUMIN_LOADER_STROKE_WIDTH,
+  LUMIN_LOADER_TRANSLATE,
+  LUMIN_LOADER_VIEWBOX,
+} from '@/registry/nativewind/lib/lumin-loader-motion';
 import type { PropsWithChildren } from 'react';
 
 // This file is web-only and used to configure the root HTML for every
@@ -45,10 +53,12 @@ const desktopBootScript = `
 })();
 `;
 
-// ◆ Web boot screen = the native splash (white Lumin mark on #0A0A0A). It is plain HTML, so it
-// paints before any JS. The app calls window.__luminBootDone() once fonts are ready
-// (app/_layout.tsx); the screen stays at least BOOT_MIN_MS so it never just flickers,
-// then fades out. Safety net: it removes itself after 10s if the app never reports in.
+// ◆ Web boot screen = ◆ Loader (Lumin brand loader, variant Lumin) on the page background, in the
+// saved theme (light: #191C1D on white · dark: #FAFAFA on #0A0A0A). Plain HTML + CSS, so it paints
+// before any JS. The background covers the page at once; the loader fades in after 150ms so fast
+// loads never flash it. The app calls window.__luminBootDone() once fonts are ready
+// (app/_layout.tsx); the screen stays at least BOOT_MIN_MS, then fades out. Safety net: it
+// removes itself after 10s if the app never reports in.
 const BOOT_MIN_MS = 800;
 const bootScript = `
 (function () {
@@ -69,23 +79,33 @@ const bootScript = `
 })();
 `;
 
+const BOOT_LOADER_SIZE = 64;
 const bootCss = `
 #lumin-boot {
   position: fixed; inset: 0; z-index: 2147483647;
   display: flex; align-items: center; justify-content: center;
-  background: ${SPLASH.background};
+  background: #ffffff; color: ${LUMIN_LOADER_COLOR};
   transition: opacity 300ms ease;
 }
+html.dark #lumin-boot { background: #0a0a0a; color: #fafafa; }
 #lumin-boot.is-hidden { opacity: 0; pointer-events: none; }
 #lumin-boot svg {
-  width: min(${SPLASH.markWidthRatio * 100}vw, 140px); height: auto;
-  animation: lumin-boot-pulse 1.6s ease-in-out infinite;
+  display: block; width: ${BOOT_LOADER_SIZE}px; height: ${BOOT_LOADER_SIZE}px; overflow: visible;
+  opacity: 0; animation: lumin-boot-appear 0.2s ease-out 0.15s forwards;
 }
-@keyframes lumin-boot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-@media (prefers-reduced-motion: reduce) { #lumin-boot svg { animation: none; } }
+#lumin-boot path {
+  fill: none; stroke: currentColor; stroke-width: ${LUMIN_LOADER_STROKE_WIDTH};
+  stroke-linecap: round; stroke-linejoin: round;
+  animation: lumin-loader-trim ${LUMIN_LOADER_DURATION_MS}ms linear infinite;
+}
+@keyframes lumin-boot-appear { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  #lumin-boot path { animation: none; stroke-dasharray: 100 100; stroke-dashoffset: 0; stroke-opacity: 1; }
+}
+${LUMIN_LOADER_KEYFRAMES_CSS}
 `;
 
-const bootMarkup = `<svg viewBox="${LUMIN_MARK_VIEWBOX}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="${LUMIN_MARK_PATH}" fill="${SPLASH.markColor}"/></svg>`;
+const bootMarkup = `<svg viewBox="${LUMIN_LOADER_VIEWBOX}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(${LUMIN_LOADER_TRANSLATE})"><path pathLength="100" d="${LUMIN_LOADER_PATH}"/></g></svg>`;
 
 const mobileCss = `
 html[data-ds-boot="desktop"] #root { visibility: hidden; }

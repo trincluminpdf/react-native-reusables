@@ -23,14 +23,19 @@ function ComponentPage({ slug, previews }: { slug: string; previews: Preview[] }
     <View className="flex-1">
       {meta && !inShell ? (
         <View className="flex-row items-center justify-end px-4 pt-3">
-          <Pressable
-            onPress={() => Linking.openURL(componentFigmaUrl(meta))}
-            className="flex-row items-center gap-1 rounded-md px-2 py-2 active:opacity-60"
-            accessibilityRole="link"
-            hitSlop={6}>
-            <Text className="text-muted-foreground text-xs">Figma</Text>
-            <Icon as={ArrowSquareOutIcon} size={12} className="text-muted-foreground" />
-          </Pressable>
+          {componentFigmaUrl(meta) ? (
+            <Pressable
+              onPress={() => Linking.openURL(componentFigmaUrl(meta)!)}
+              className="flex-row items-center gap-1 rounded-md px-2 py-2 active:opacity-60"
+              accessibilityRole="link"
+              hitSlop={6}>
+              <Text className="text-muted-foreground text-xs">Figma</Text>
+              <Icon as={ArrowSquareOutIcon} size={12} className="text-muted-foreground" />
+            </Pressable>
+          ) : (
+            // Code-only component: no Figma page to link to.
+            <Text className="text-muted-foreground px-2 py-2 text-xs">Code only</Text>
+          )}
         </View>
       ) : null}
       <PreviewCarousel previews={previews} />

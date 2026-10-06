@@ -23,6 +23,7 @@ import { previews as inputOtp } from './input-otp';
 import { previews as input } from './input';
 import { previews as item } from './item';
 import { previews as label } from './label';
+import { previews as loader } from './loader';
 import { previews as popover } from './popover';
 import { previews as progress } from './progress';
 import { previews as radioGroup } from './radio-group';
@@ -67,6 +68,7 @@ export const PREVIEWS: Record<string, Preview[]> = {
   'input': input,
   'item': item,
   'label': label,
+  'loader': loader,
   'popover': popover,
   'progress': progress,
   'radio-group': radioGroup,
