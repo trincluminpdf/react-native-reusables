@@ -3,6 +3,7 @@ import { Button } from '@/registry/nativewind/components/ui/button';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { isShellFrame, SHELL_SAFE_BOTTOM } from '@showcase/lib/desktop-frame';
+import { usePreviewPlatform } from '@showcase/lib/preview-platform';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import * as React from 'react';
 import { useState } from 'react';
@@ -27,10 +28,26 @@ type Preview = {
 type PreviewCarouselProps = {
   previews: Preview[];
   removeBottomSafeArea?: boolean;
+  /** Start on this preview (the page keeps the position when the iOS | Android switch swaps previews). */
+  initialIndex?: number;
+  onIndexChange?: (index: number) => void;
 };
 
-function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCarouselProps) {
-  const [index, setIndex] = useState(0);
+function PreviewCarousel({
+  previews,
+  removeBottomSafeArea = false,
+  initialIndex = 0,
+  onIndexChange,
+}: PreviewCarouselProps) {
+  const [index, setIndexState] = useState(Math.max(0, initialIndex));
+  const setIndex = React.useCallback(
+    (next: number) => {
+      setIndexState(next);
+      onIndexChange?.(next);
+    },
+    [onIndexChange]
+  );
+  const os = usePreviewPlatform();
   const ref = React.useRef<FlatList>(null);
   // Track the live window width so swiping/paging stays aligned after rotation or resize.
   const { width } = useWindowDimensions();
@@ -40,7 +57,7 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
   const insets = useSafeAreaInsets();
   const [inShell, setInShell] = useState(false);
   React.useEffect(() => setInShell(isShellFrame()), []);
-  const bottomInset = Math.max(insets.bottom, inShell ? SHELL_SAFE_BOTTOM : 0);
+  const bottomInset = Math.max(insets.bottom, inShell ? SHELL_SAFE_BOTTOM[os] : 0);
   // The variant bar floats over the list; previews keep clear of it using its measured height
   // (it grows with the safe area, so a fixed margin is not enough).
   const [barHeight, setBarHeight] = useState(0);

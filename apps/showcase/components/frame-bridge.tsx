@@ -1,11 +1,12 @@
 import { FRAME_MESSAGE, isShellFrame, normalizePath } from '@showcase/lib/desktop-frame';
+import { applyPreviewPlatform } from '@showcase/lib/preview-platform';
 import { router, usePathname, type Href } from 'expo-router';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
 /**
  * Child side of the desktop shell (see lib/desktop-frame.ts). Renders nothing.
- * Reports route changes to the shell and follows sidebar clicks.
+ * Reports route changes to the shell and follows sidebar clicks and the iOS | Android switch.
  */
 export function FrameBridge() {
   const pathname = usePathname();
@@ -27,7 +28,13 @@ export function FrameBridge() {
     if (!active) return;
     function onMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin || event.source !== window.parent) return;
-      const data = event.data as { type?: string; path?: string } | null;
+      const data = event.data as { type?: string; path?: string; platform?: string } | null;
+      if (data?.type === FRAME_MESSAGE.platform) {
+        // The shell already saved the choice; just redraw.
+        if (data.platform === 'ios' || data.platform === 'android')
+          applyPreviewPlatform(data.platform);
+        return;
+      }
       if (data?.type !== FRAME_MESSAGE.navigate || typeof data.path !== 'string') return;
       const target = normalizePath(data.path);
       if (target === normalizePath(window.location.pathname)) return;

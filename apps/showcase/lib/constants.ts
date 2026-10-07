@@ -23,7 +23,7 @@ export const COMPONENTS = [
   { slug: 'checkbox', name: 'Checkbox', figma: '6-12', status: 'RNR + Custom' },
   { slug: 'collapsible', name: 'Collapsible', figma: '6-13', status: 'RNR' },
   { slug: 'context-menu', name: 'Context Menu', figma: '6-14', status: 'RNR + Custom' },
-  { slug: 'date-picker', name: 'Date Picker', figma: '6-15', status: 'Custom' },
+  { slug: 'date-picker', name: 'Date Picker', figma: '6-15', status: 'Custom', native: true },
   { slug: 'dialog', name: 'Dialog', figma: '6-16', status: 'RNR + Custom' },
   { slug: 'drawer', name: 'Drawer', figma: '6-17', status: 'Custom' },
   { slug: 'dropdown-menu', name: 'Dropdown Menu', figma: '6-18', status: 'RNR + Custom' },
@@ -69,9 +69,24 @@ export const COMPONENTS = [
     figma: '75-2933',
     status: 'New',
     group: 'in-app',
+    native: true,
   },
-  { slug: 'app-bar', name: 'App Bar', figma: '75-2918', status: 'New', group: 'in-app' },
-  { slug: 'nav-bar', name: 'Nav Bar', figma: '75-2919', status: 'New', group: 'in-app' },
+  {
+    slug: 'app-bar',
+    name: 'App Bar',
+    figma: '75-2918',
+    status: 'New',
+    group: 'in-app',
+    native: true,
+  },
+  {
+    slug: 'nav-bar',
+    name: 'Nav Bar',
+    figma: '75-2919',
+    status: 'New',
+    group: 'in-app',
+    native: true,
+  },
   { slug: 'tool-tile', name: 'Tool Tile', figma: '75-2920', status: 'New', group: 'in-app' },
   {
     slug: 'section-header',
@@ -96,7 +111,14 @@ export const COMPONENTS = [
     status: 'New',
     group: 'in-app',
   },
-  { slug: 'toolbar', name: 'Toolbar', figma: '75-2926', status: 'New', group: 'in-app' },
+  {
+    slug: 'toolbar',
+    name: 'Toolbar',
+    figma: '75-2926',
+    status: 'New',
+    group: 'in-app',
+    native: true,
+  },
   {
     slug: 'page-indicator',
     name: 'Page Indicator',
@@ -130,6 +152,11 @@ export const COMPONENTS = [
   figmaFile?: string;
   status: ComponentStatus;
   group?: 'in-app';
+  /**
+   * Has a part the OS draws (◆ Date Picker system picker) or that looks different per OS (liquid
+   * glass) → the page shows the iOS | Android switch on web.
+   */
+  native?: true;
 }>;
 
 export type ComponentSlug = (typeof COMPONENTS)[number]['slug'];
@@ -150,6 +177,11 @@ export const IN_APP_COMPONENTS = COMPONENTS.filter((c) => 'group' in c && c.grou
 
 export function getComponent(slug: string) {
   return COMPONENTS.find((c) => c.slug === slug);
+}
+
+/** True for pages whose previews change with the iOS | Android switch. */
+export function hasNativeParts(meta: (typeof COMPONENTS)[number] | undefined) {
+  return !!meta && 'native' in meta && meta.native === true;
 }
 
 export const BLOCKS = [

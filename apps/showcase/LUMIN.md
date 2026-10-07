@@ -15,6 +15,8 @@ Figma is the documentation, this app is the running preview. Every component pag
 | Font (Inter, JetBrains Mono) | `tailwind.config.js`, `plugins/interFontPlugin.js`, `hooks/use-lumin-font.tsx` |
 | Component index (status + Figma page id) | `apps/showcase/lib/constants.ts` |
 | Previews (one file per Figma page) | `apps/showcase/examples/*.tsx` |
+| iOS \| Android preview switch | `packages/registry/src/nativewind/lib/preview-platform.ts` (what components read) · `apps/showcase/lib/preview-platform.ts` (start value, saving) · `components/platform-switch.tsx` |
+| Web replicas of the native date pickers | `packages/registry/src/nativewind/components/ui/date-picker-replica.tsx` |
 
 Every component file starts with a header comment listing its ◆ Lumin deltas — the same list as the Figma page header.
 
@@ -42,9 +44,18 @@ Figma section `--- In-app ◆` (pages after Typography) = app-screen components 
 | ◆ Annotation Sheet · ◆ Color Picker | `annotation-sheet.tsx` · `color-picker.tsx` |
 | ◆ Showcase demo | `examples/showcase-demo.tsx` (interactive: Viewer → Mark up → select text → Quick Menu → sheet → Color Picker; Home; Tools; Search) |
 
-- **Liquid glass** (`glass/*`): iOS 26+ uses `expo-glass-effect` (native Liquid Glass), older iOS `expo-blur`, Android a translucent surface (no reliable backdrop blur), web CSS `backdrop-blur-xl`. Native glass needs a new dev build (Expo Go is fine for blur).
+- **Liquid glass** (`glass/*`): iOS 26+ uses `expo-glass-effect` (native Liquid Glass), older iOS `expo-blur`, Android a translucent surface (no reliable backdrop blur). The web preview follows the iOS | Android switch: iOS = Liquid Glass look-alike (CSS blur + saturation, bright rim, no lensing), Android = the same translucent surface as on device. App Bar › "Glass · over content" shows the difference. Native glass needs a new dev build (Expo Go is fine for blur).
 - **Toolbar pattern**: uniform Tool Items + a trailing Style color well; tapping the active tool again also opens the Annotation Sheet. Tool icons follow the web Tool icon table (Figma ◆ Icon Map).
 - Rows with a trailing More / action button keep the button as a sibling of the tappable area (no button inside a button on web); the whole row tints while pressed.
+
+## iOS | Android preview switch (web)
+
+Some parts are drawn by the OS or look different per OS. On the web preview an **iOS | Android** switch picks which one you see:
+
+- **Where**: desktop top bar (next to New tab) — also swaps the phone chrome (iPhone: Dynamic Island + home indicator · Android: punch-hole status bar + gesture handle, smaller corners, 24 vs 34 bottom inset). Phone web: at the top of pages with native parts (`native: true` in `lib/constants.ts`: Date Picker, App Bar, Nav Bar, Toolbar, Showcase demo).
+- **What changes**: ◆ Date Picker (system picker replicas + per-platform previews — `platform: 'ios' | 'android'` on a `Preview` hides it on the other OS) and liquid glass.
+- **Start value**: `?platform=ios|android` → (inside the desktop frame) the shell's value → saved choice (`localStorage` `lumin-ds-platform`) → the device (Android phones open as Android, everything else as iOS). Picking one saves it and drops `?platform=` from the address. The shell tells the frame with `postMessage` `lumin-ds:platform`.
+- **Native**: `usePreviewPlatform()` always returns the real `Platform.OS` — the switch never changes device behaviour.
 
 ## Desktop preview (web ≥ 1024px)
 
@@ -73,7 +84,14 @@ Dark `--border` / `--input` are white 10% / 15% in Figma; they are flattened ove
 
 ## Date Picker
 
-The picker is native (`@react-native-community/datetimepicker`): Android opens the Material 3 modal date picker (`design: 'material'`), iOS shows `display="inline"` inside the ◆ Drawer. The web preview shows ◆ Calendar in the Drawer as a stand-in.
+The picker is native (`@react-native-community/datetimepicker`): Android opens the Material 3 modal date picker (`design: 'material'`), iOS shows `display="inline"` inside the ◆ Drawer (`iosDisplay="inline"`, default) or the system pill + popover (`iosDisplay="compact"`, Figma "Display=Compact (system)"; no Trigger, always shows a date).
+
+The web preview draws **replicas** of those system pickers (`date-picker-replica.tsx`, web only), picked by the iOS | Android switch:
+
+- iOS — inline calendar in the Drawer (SF font, iOS colors; selected = solid label circle, today = tint on light tint, as in the Apple kit; "Month Year ›" opens the month/year wheel) and the compact pill + popover (each tap sets the value, tap outside closes).
+- Android — Material 3 modal with the Lumin roles from `withLuminAndroidTheme` (not M3 purple), Roboto: Cancel / OK, "Month Year ▾" year grid, pencil → text input (mm/dd/yyyy, "Invalid format." / "Out of range.").
+
+Previews: Trigger · State (both) · iOS · Display=Inline in Drawer · iOS · Display=Compact (system) · Android · Material 3 modal.
 
 Android needs `plugins/withLuminAndroidTheme.js` (registered in `app.config.ts`): it switches `AppTheme` to `Theme.Material3.DayNight.NoActionBar` and maps the M3 color roles to Lumin light/dark tokens. Without it the M3 dialog crashes natively. It is native config, so run `pnpm prebuild:android` / rebuild the dev client — Expo Go and OTA updates won't pick it up. `androidDesign="default"` falls back to the legacy dialog.
 

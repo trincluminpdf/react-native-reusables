@@ -10,20 +10,24 @@ import { Platform, useWindowDimensions } from 'react-native';
  * - child → parent `route`: the frame navigated (tap in the list, Back) → parent updates
  *   the sidebar, address bar and QR code.
  * - parent → child `navigate`: a sidebar click → the frame pushes that route.
+ * - parent → child `platform`: the iOS | Android switch → the frame redraws native parts.
  * Theme: the parent toggles the `dark` class on the frame's <html>; the frame's
  * useWebColorSchemeSync observer picks it up.
  */
 export const DESKTOP_MIN_WIDTH = 1024;
 
 /**
- * Bottom safe area of the phone frame (iPhone home indicator, pt). The iframe has no real
- * safe area — env(safe-area-inset-bottom) is 0 inside it — so bottom-anchored UI uses this.
+ * Bottom safe area of the phone frame per preview platform: iPhone home indicator 34pt, Android
+ * gesture navigation bar 24dp. The iframe has no real safe area — env(safe-area-inset-bottom) is 0
+ * inside it — so bottom-anchored UI uses this.
  */
-export const SHELL_SAFE_BOTTOM = 34;
+export const SHELL_SAFE_BOTTOM = { ios: 34, android: 24 } as const;
 
 export const FRAME_MESSAGE = {
   route: 'lumin-ds:route',
   navigate: 'lumin-ds:navigate',
+  /** parent → child: the iOS | Android switch changed (lib/preview-platform.ts). */
+  platform: 'lumin-ds:platform',
 } as const;
 
 type ShellWindow = Window & { __LUMIN_DS_SHELL__?: boolean };

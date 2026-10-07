@@ -7,14 +7,16 @@
  *   Theme.Material3.* — add the `./plugins/withLuminAndroidTheme` config plugin (showcase does) and
  *   rebuild the dev client; without it the M3 dialog crashes natively. `androidDesign="default"`
  *   falls back to the legacy framework DatePickerDialog (no theme requirement, not DS-styled).
- * - iOS: <DateTimePicker display="inline" /> inside our ◆ Drawer (Figma "Inline in Drawer").
- *   display="compact" (iOS default) shows the system pill + popover instead of our Trigger.
- * - Web (showcase only): ◆ Calendar inside the Drawer as a stand-in for the native picker.
+ * - iOS: `iosDisplay="inline"` (default) = <DateTimePicker display="inline" /> inside our ◆ Drawer
+ *   (Figma "Display=Inline in Drawer"). `iosDisplay="compact"` = the system pill + popover
+ *   (Figma "Display=Compact (system)"); our Trigger is not used and there is no placeholder — the
+ *   pill always shows a date (today when `value` is empty).
+ * - Web (live preview only): replicas of the OS picker chosen by the preview's iOS | Android switch
+ *   (lib/preview-platform + date-picker-replica.tsx) — never used on a device.
  * Native pickers follow the OS theme/locale; only accentColor / themeVariant / locale are set on iOS.
  * Trigger mirrors the Select trigger: h-10 (Tablet sm:h-9), px-3, rounded-md, 44 hit area, focus ring.
  */
 import { Button } from '@/registry/nativewind/components/ui/button';
-import { Calendar } from '@/registry/nativewind/components/ui/calendar';
 import {
   Drawer,
   DrawerClose,
@@ -24,9 +26,15 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/registry/nativewind/components/ui/drawer';
+import {
+  AndroidDatePickerDialog,
+  IOSCompactPicker,
+  IOSInlineCalendar,
+} from '@/registry/nativewind/components/ui/date-picker-replica';
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { useFocusRing } from '@/registry/nativewind/lib/focus-ring';
+import { usePreviewPlatform } from '@/registry/nativewind/lib/preview-platform';
 import { cn } from '@/registry/nativewind/lib/utils';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useColorScheme } from 'nativewind';
@@ -67,10 +75,15 @@ function DatePickerTrigger({
       hitSlop={2}
       className={cn(
         'border-input bg-background dark:bg-input/30 active:bg-accent dark:active:bg-input/50 h-10 w-full flex-row items-center gap-2 rounded-md border px-3 sm:h-9',
-        Platform.select({ web: 'outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]' }),
+        Platform.select({
+          web: 'focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]',
+        }),
         open && cn('border-ring', Platform.select({ web: 'ring-ring/50 ring-[3px]' })),
         invalid &&
-          cn('border-destructive', Platform.select({ web: 'ring-destructive/20 dark:ring-destructive/40 ring-[3px]' })),
+          cn(
+            'border-destructive',
+            Platform.select({ web: 'ring-destructive/20 dark:ring-destructive/40 ring-[3px]' })
+          ),
         disabled && 'bg-input/50 dark:bg-input/80 opacity-50',
         className
       )}
@@ -88,6 +101,7 @@ function DatePickerTrigger({
 }
 
 type AndroidDesign = 'material' | 'default';
+type IOSDisplay = 'inline' | 'compact';
 
 function clampDate(date: Date, min?: Date, max?: Date) {
   if (min && date < min) return new Date(min);
@@ -114,6 +128,8 @@ type DatePickerProps = {
   locale?: string;
   /** Android dialog: 'material' (M3, default — needs the theme plugin) or 'default' (legacy). */
   androidDesign?: AndroidDesign;
+  /** iOS: 'inline' (default — calendar in ◆ Drawer, our Trigger) or 'compact' (system pill + popover). */
+  iosDisplay?: IOSDisplay;
   className?: string;
 };
 
@@ -129,9 +145,13 @@ function DatePicker({
   maximumDate,
   locale,
   androidDesign = 'material',
+  iosDisplay = 'inline',
   className,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
+  // Device: the real OS. Web preview: the iOS | Android switch.
+  const os = usePreviewPlatform();
+  const web = Platform.OS === 'web';
   const [draft, setDraft] = React.useState<Date>(value ?? new Date());
   const { colorScheme } = useColorScheme();
   // Android: the dialog lives outside React — track it so a double tap can't stack a second open()
@@ -197,61 +217,109 @@ function DatePicker({
 
   if (Platform.OS === 'android') return trigger;
 
+  if (os === 'ios' && iosDisplay === 'compact') {
+    const shown = value ?? clampDate(new Date(), minimumDate, maximumDate);
+    return web ? (
+      <IOSCompactPicker
+        value={shown}
+        onChange={(d) => onChange?.(d)}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        locale={locale}
+        disabled={disabled}
+      />
+    ) : (
+      <DateTimePicker
+        value={shown}
+        mode="date"
+        display="compact"
+        disabled={disabled}
+        themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        locale={locale}
+        onChange={(_e, d) => d && onChange?.(d)}
+        style={{ alignSelf: 'flex-start' }}
+      />
+    );
+  }
+
+  if (web && os === 'android') {
+    return (
+      <>
+        {trigger}
+        <AndroidDatePickerDialog
+          open={open}
+          value={draft}
+          title={androidDesign === 'material' ? title : undefined}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+          onConfirm={(d) => {
+            setOpen(false);
+            onChange?.(d);
+          }}
+          onDismiss={() => setOpen(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       {trigger}
       <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>{title}</DrawerTitle>
-          {Platform.OS === 'web' ? (
-            <DrawerDescription>Web preview — on device the native picker opens.</DrawerDescription>
-          ) : null}
-        </DrawerHeader>
-        <View className="items-center px-4">
-          {Platform.OS === 'ios' ? (
-            <DateTimePicker
-              value={draft}
-              mode="date"
-              display="inline"
-              themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              locale={locale}
-              onChange={(_e, date) => date && setDraft(date)}
-              style={{ alignSelf: 'stretch' }}
-            />
-          ) : (
-            <Calendar
-              mode="single"
-              selected={draft}
-              onSelect={(d) => setDraft(d)}
-              disabled={(d) =>
-                (!!minimumDate && d < minimumDate) || (!!maximumDate && d > maximumDate)
-              }
-            />
-          )}
-        </View>
-        <DrawerFooter>
-          <Button
-            onPress={() => {
-              onChange?.(draft);
-              setOpen(false);
-            }}>
-            <Text>Done</Text>
-          </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">
-              <Text>Cancel</Text>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{title}</DrawerTitle>
+            {web ? (
+              <DrawerDescription>
+                Native iOS picker (display="inline") · web replica
+              </DrawerDescription>
+            ) : null}
+          </DrawerHeader>
+          <View className="items-center px-4">
+            {Platform.OS === 'ios' ? (
+              <DateTimePicker
+                value={draft}
+                mode="date"
+                display="inline"
+                themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
+                minimumDate={minimumDate}
+                maximumDate={maximumDate}
+                locale={locale}
+                onChange={(_e, date) => date && setDraft(date)}
+                style={{ alignSelf: 'stretch' }}
+              />
+            ) : (
+              <IOSInlineCalendar
+                value={draft}
+                onChange={setDraft}
+                minimumDate={minimumDate}
+                maximumDate={maximumDate}
+                locale={locale}
+              />
+            )}
+          </View>
+          <DrawerFooter>
+            <Button
+              onPress={() => {
+                onChange?.(draft);
+                setOpen(false);
+              }}>
+              <Text>Done</Text>
             </Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
+            <DrawerClose asChild>
+              <Button variant="outline">
+                <Text>Cancel</Text>
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
       </Drawer>
     </>
   );
 }
 
 export { DatePicker, DatePickerTrigger, formatDate };
-export type { AndroidDesign as DatePickerAndroidDesign };
+export type { AndroidDesign as DatePickerAndroidDesign, IOSDisplay as DatePickerIOSDisplay };
 export type { DatePickerProps, DatePickerTriggerProps };

@@ -3,6 +3,7 @@ import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { Input } from '@/registry/nativewind/components/ui/input';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { LuminLogo } from '@showcase/components/lumin-logo';
+import { PlatformSwitch } from '@showcase/components/platform-switch';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { persistWebTheme } from '@showcase/hooks/use-web-color-scheme-sync';
 import {
@@ -19,6 +20,11 @@ import {
   getComponent,
   IN_APP_COMPONENTS,
 } from '@showcase/lib/constants';
+import {
+  choosePreviewPlatform,
+  usePreviewPlatform,
+  type PreviewOS,
+} from '@showcase/lib/preview-platform';
 import { usePathname } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import {
@@ -34,9 +40,17 @@ import { QRCodeSVG } from 'qrcode.react';
 import * as React from 'react';
 import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 
-/** iPhone 15/16-size viewport (pt). The iframe gets the area below the status bar. */
+/**
+ * Phone viewport (390 × 844, PDF-Mobile-DS Mode = Mobile) for both platforms — only the chrome
+ * changes with the iOS | Android switch. The iframe gets the area below the status bar.
+ */
 const SCREEN = { width: 390, height: 844, statusBar: 44 };
 const BEZEL = 12;
+/** Outer / screen corner radius per platform (iPhone is rounder than a Pixel). */
+const CORNERS: Record<PreviewOS, { outer: number; screen: number }> = {
+  ios: { outer: 60, screen: 48 },
+  android: { outer: 46, screen: 34 },
+};
 const FRAME = { width: SCREEN.width + BEZEL * 2, height: SCREEN.height + BEZEL * 2 };
 const TOP_BAR = 56;
 const STAGE_PADDING = 32;
@@ -53,6 +67,7 @@ export function DesktopShell() {
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
   const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const os = usePreviewPlatform();
 
   React.useEffect(() => {
     setLastShellPath(path);
@@ -83,6 +98,15 @@ export function DesktopShell() {
     } catch {}
   }, [isDark]);
   React.useEffect(syncFrameTheme, [syncFrameTheme]);
+
+  // iOS | Android: the frame redraws its native parts (Date Picker, liquid glass).
+  const syncFramePlatform = React.useCallback(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: FRAME_MESSAGE.platform, platform: os },
+      window.location.origin
+    );
+  }, [os]);
+  React.useEffect(syncFramePlatform, [syncFramePlatform]);
 
   function navigate(to: string) {
     const target = normalizePath(to);
@@ -115,6 +139,7 @@ export function DesktopShell() {
               {meta ? meta.name : 'All components'}
             </Text>
           </View>
+          <PlatformSwitch value={os} onChange={choosePreviewPlatform} />
           <Button
             variant="ghost"
             size="sm"
@@ -133,12 +158,15 @@ export function DesktopShell() {
             <Icon as={isDark ? SunIcon : MoonIcon} className="size-5" />
           </Button>
         </View>
-        <PhoneStage dark={isDark}>
+        <PhoneStage dark={isDark} os={os}>
           <iframe
             ref={iframeRef}
             src={frameSrc}
             title="Mobile preview"
-            onLoad={syncFrameTheme}
+            onLoad={() => {
+              syncFrameTheme();
+              syncFramePlatform();
+            }}
             style={{
               display: 'block',
               width: SCREEN.width,
@@ -261,7 +289,16 @@ function SidebarItem({
 }
 
 /** Centers the phone frame and scales it down to fit short windows. */
-function PhoneStage({ children, dark }: { children: React.ReactNode; dark: boolean }) {
+function PhoneStage({
+  children,
+  dark,
+  os,
+}: {
+  children: React.ReactNode;
+  dark: boolean;
+  os: PreviewOS;
+}) {
+  const corners = CORNERS[os];
   const { height } = useWindowDimensions();
   const available = height - TOP_BAR - STAGE_PADDING * 2;
   const scale = Math.min(1, Math.max(0.5, available / FRAME.height));
@@ -275,7 +312,7 @@ function PhoneStage({ children, dark }: { children: React.ReactNode; dark: boole
             height: FRAME.height,
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
-            borderRadius: 60,
+            borderRadius: corners.outer,
             padding: BEZEL,
             background: dark ? '#2a2a2f' : '#111113',
             boxShadow:
@@ -287,25 +324,25 @@ function PhoneStage({ children, dark }: { children: React.ReactNode; dark: boole
               position: 'relative',
               width: SCREEN.width,
               height: SCREEN.height,
-              borderRadius: 48,
+              borderRadius: corners.screen,
               overflow: 'hidden',
               background: 'hsl(var(--background))',
             }}>
-            <StatusBar />
+            {os === 'android' ? <AndroidStatusBar /> : <StatusBar />}
             {children}
-            {/* Home indicator */}
+            {/* iOS home indicator 134×5 · Android gesture navigation handle 108×4 */}
             <div
               aria-hidden
               style={{
                 position: 'absolute',
                 left: '50%',
-                bottom: 8,
-                width: 134,
-                height: 5,
-                marginLeft: -67,
+                bottom: os === 'android' ? 10 : 8,
+                width: os === 'android' ? 108 : 134,
+                height: os === 'android' ? 4 : 5,
+                marginLeft: os === 'android' ? -54 : -67,
                 borderRadius: 3,
                 background: 'hsl(var(--foreground))',
-                opacity: 0.35,
+                opacity: os === 'android' ? 0.5 : 0.35,
                 pointerEvents: 'none',
               }}
             />
@@ -366,6 +403,53 @@ function StatusBar() {
         />
         <rect x="44.5" y="3" width="17" height="6" rx="1.6" />
         <rect x="64.5" y="4" width="1.6" height="4" rx="0.8" fillOpacity="0.4" />
+      </svg>
+    </div>
+  );
+}
+
+/** Pixel-style status bar: time left, punch-hole camera centered, Wi-Fi / signal / battery right. */
+function AndroidStatusBar() {
+  const color = 'hsl(var(--foreground))';
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: 'relative',
+        height: SCREEN.statusBar,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 26px 0 28px',
+        color,
+        fontFamily: 'Roboto, "Google Sans", system-ui, sans-serif',
+        fontSize: 14,
+        fontWeight: 500,
+        letterSpacing: 0.2,
+        userSelect: 'none',
+      }}>
+      <span>9:41</span>
+      {/* Punch-hole camera */}
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: 11,
+          width: 22,
+          height: 22,
+          marginLeft: -11,
+          borderRadius: 11,
+          background: '#000',
+        }}
+      />
+      <svg width="58" height="16" viewBox="0 0 58 16" fill={color}>
+        {/* Wi-Fi (fan) */}
+        <path d="M8 13.5 0.6 5.2a10.6 10.6 0 0 1 14.8 0L8 13.5Z" />
+        {/* Cellular (triangle) */}
+        <path d="M33 1.5v13H20L33 1.5Z" />
+        {/* Battery (vertical) */}
+        <rect x="45" y="2.5" width="8" height="12.5" rx="1.6" />
+        <rect x="47" y="1" width="4" height="2" rx="0.6" />
       </svg>
     </div>
   );
@@ -437,11 +521,14 @@ function SidePanel({ url, figma }: { url: string; figma: string | null }) {
             <Icon as={ArrowSquareOutIcon} className="text-muted-foreground size-4" />
           </Button>
         ) : (
-          <Text className="text-muted-foreground text-sm">Code only — no Figma page for this one.</Text>
+          <Text className="text-muted-foreground text-sm">
+            Code only — no Figma page for this one.
+          </Text>
         )}
         <Text className="text-muted-foreground text-xs leading-5">
           The frame shows the phone layout (Mode = Mobile, 390 wide). Click acts as tap; scroll with
-          the trackpad or mouse wheel.
+          the trackpad or mouse wheel. iOS | Android (top bar) redraws the parts each OS draws
+          itself — the Date Picker system picker and liquid glass — and the phone chrome.
         </Text>
       </View>
     </ScrollView>

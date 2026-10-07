@@ -42,40 +42,92 @@ function Trigger() {
   );
 }
 
-function Picker() {
-  const [date, setDate] = React.useState<Date | undefined>();
-  const [bounded, setBounded] = React.useState<Date | undefined>();
+function Bounded(props: Omit<React.ComponentProps<typeof DatePicker>, 'value' | 'onChange'>) {
+  return (
+    <LivePicker {...props} minimumDate={TODAY} maximumDate={IN_30_DAYS} placeholder="Due date" />
+  );
+}
+
+/** Caption under the platform demos: what runs on the device. */
+function Note({ children }: { children: string }) {
+  return <Text className="text-muted-foreground text-xs leading-5">{children}</Text>;
+}
+
+function IOSInline() {
   return (
     <PreviewStack>
-      <Spec label="Tap the trigger — native picker on device">
-        <DatePicker value={date} onChange={setDate} />
+      <Spec label="Tap the trigger → Drawer with the inline calendar">
+        <LivePicker />
       </Spec>
       <Spec label="Min / max (today → +30 days)">
-        <DatePicker
-          value={bounded}
-          onChange={setBounded}
-          minimumDate={TODAY}
-          maximumDate={IN_30_DAYS}
-          placeholder="Due date"
-        />
+        <Bounded />
       </Spec>
       <Spec label="Disabled">
-        <DatePicker disabled />
+        <LivePicker disabled />
       </Spec>
-      <Text className="text-muted-foreground text-xs leading-5">
-        {Platform.select({
-          android:
-            'Android: DateTimePickerAndroid (design="material") → Material 3 modal date picker, Lumin colors via plugins/withLuminAndroidTheme.',
-          ios: 'iOS: <DateTimePicker display="inline" /> inside ◆ Drawer.',
-          default:
-            'Web preview: ◆ Calendar inside ◆ Drawer stands in for the native picker. On Android the Material 3 dialog opens; on iOS the inline UIDatePicker opens in a Drawer (see Figma "(native demo)" components).',
-        })}
-      </Text>
+      <Note>
+        {Platform.OS === 'web'
+          ? 'Web replica of iOS <DateTimePicker display="inline" /> inside ◆ Drawer (Done / Cancel). Tap "Month Year ›" for the wheel. On iPhone the system picker opens.'
+          : 'iOS: <DateTimePicker display="inline" /> inside ◆ Drawer.'}
+      </Note>
+    </PreviewStack>
+  );
+}
+
+function IOSCompact() {
+  return (
+    <PreviewStack>
+      <Spec label="Display=Compact (system) — no Trigger, tap the pill">
+        <View className="flex-row items-center justify-between gap-3">
+          <Text className="text-base">Due date</Text>
+          <LivePicker iosDisplay="compact" initial={SAMPLE} />
+        </View>
+      </Spec>
+      <Spec label="Min / max (today → +30 days)">
+        <View className="flex-row items-center justify-between gap-3">
+          <Text className="text-base">Reminder</Text>
+          <Bounded iosDisplay="compact" />
+        </View>
+      </Spec>
+      <Spec label="Disabled">
+        <View className="flex-row items-center justify-between gap-3">
+          <Text className="text-muted-foreground text-base">Due date</Text>
+          <LivePicker iosDisplay="compact" initial={SAMPLE} disabled />
+        </View>
+      </Spec>
+      <Note>
+        {
+          'iosDisplay="compact" → <DateTimePicker display="compact" /> (iOS default style). The pill always shows a date (today when empty), each tap in the popover sets the value, tap outside to close. Android ignores it and opens the Material 3 dialog.'
+        }
+      </Note>
+    </PreviewStack>
+  );
+}
+
+function AndroidM3() {
+  return (
+    <PreviewStack>
+      <Spec label="Tap the trigger → Material 3 modal date picker">
+        <LivePicker />
+      </Spec>
+      <Spec label="Min / max (today → +30 days)">
+        <Bounded />
+      </Spec>
+      <Spec label="Disabled">
+        <LivePicker disabled />
+      </Spec>
+      <Note>
+        {Platform.OS === 'web'
+          ? 'Web replica of DateTimePickerAndroid (design="material") with the Lumin colors from plugins/withLuminAndroidTheme: Cancel / OK, tap "Month Year ▾" for years, pencil for text input. On Android the system dialog opens.'
+          : 'Android: DateTimePickerAndroid (design="material") → Material 3 modal date picker, Lumin colors via plugins/withLuminAndroidTheme.'}
+      </Note>
     </PreviewStack>
   );
 }
 
 export const previews: Preview[] = [
   { name: 'Trigger · State', component: Trigger },
-  { name: 'Picker (native)', component: Picker },
+  { name: 'iOS · Display=Inline in Drawer', component: IOSInline, platform: 'ios' },
+  { name: 'iOS · Display=Compact (system)', component: IOSCompact, platform: 'ios' },
+  { name: 'Android · Material 3 modal', component: AndroidM3, platform: 'android' },
 ];

@@ -11,6 +11,7 @@ import { WebMobileBar } from '@showcase/components/web-mobile-bar';
 import { useLuminFont } from '@showcase/hooks/use-lumin-font';
 import { useWebColorSchemeSync } from '@showcase/hooks/use-web-color-scheme-sync';
 import { getLastShellPath, useIsDesktopWeb } from '@showcase/lib/desktop-frame';
+import { initPreviewPlatform } from '@showcase/lib/preview-platform';
 import { NAV_THEME } from '@showcase/lib/theme';
 import { router, Stack, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -22,6 +23,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 SplashScreen.preventAutoHideAsync();
+// Web: iOS | Android preview switch — start value before the first render (no-op on native).
+initPreviewPlatform();
 
 export {
   // Catch any errors thrown by the Layout component.

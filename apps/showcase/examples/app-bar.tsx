@@ -10,6 +10,7 @@ import {
 import { LuminLogo } from '@/registry/nativewind/components/ui/lumin-logo';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import type { Preview } from '@showcase/components/component-page';
+import { usePreviewPlatform } from '@showcase/lib/preview-platform';
 import { PreviewStack, Spec } from '@showcase/components/spec';
 import {
   ArrowLeftIcon,
@@ -114,6 +115,71 @@ function Types() {
   );
 }
 
+/** Busy content under the bar so the glass material is visible (blur on iOS, none on Android). */
+function ContentUnder({ children }: { children: React.ReactNode }) {
+  return (
+    <View className="-mx-4 overflow-hidden">
+      <View className="gap-2 bg-white px-4 pb-3 pt-2" aria-hidden>
+        <View className="h-8 flex-row gap-2">
+          <View className="w-20 rounded-sm bg-yellow-300" />
+          <View className="flex-1 rounded-sm bg-blue-500" />
+          <View className="w-14 rounded-sm bg-rose-400" />
+        </View>
+        <View className="h-8 flex-row gap-2">
+          <View className="w-8 rounded-full bg-emerald-400" />
+          <View className="flex-1 rounded-sm bg-neutral-800" />
+          <View className="w-24 rounded-sm bg-yellow-300" />
+        </View>
+        <Text className="pt-1 text-sm text-neutral-700">
+          Revenue grew in every region. Sign the summary page before Friday.
+        </Text>
+      </View>
+      <View className="absolute left-0 right-0 top-[10px]">{children}</View>
+    </View>
+  );
+}
+
+function GlassOverContent() {
+  const os = usePreviewPlatform();
+  return (
+    <PreviewStack>
+      <Spec label="◆ Type=Viewer · over content">
+        <ContentUnder>
+          <AppBar>
+            <AppBarGroup>
+              <AppBarButton icon={HouseIcon} accessibilityLabel="Home" />
+            </AppBarGroup>
+            <AppBarGroup>
+              <AppBarButton icon={MagnifyingGlassIcon} accessibilityLabel="Search in document" />
+              <AppBarButton icon={SparkleIcon} accessibilityLabel="Lumin AI" />
+              <AppBarButton icon={SpeakerHighIcon} accessibilityLabel="Read aloud" />
+              <AppBarButton icon={DotsThreeIcon} accessibilityLabel="More" />
+            </AppBarGroup>
+          </AppBar>
+        </ContentUnder>
+      </Spec>
+      <Spec label="◆ Type=Editor · over content">
+        <ContentUnder>
+          <AppBar>
+            <AppBarGroup>
+              <AppBarButton icon={ArrowLeftIcon} accessibilityLabel="Done editing" />
+            </AppBarGroup>
+            <AppBarGroup>
+              <AppBarButton icon={ArrowUUpLeftIcon} accessibilityLabel="Undo" />
+              <AppBarButton icon={ArrowUUpRightIcon} accessibilityLabel="Redo" disabled />
+            </AppBarGroup>
+          </AppBar>
+        </ContentUnder>
+      </Spec>
+      <Text className="text-muted-foreground text-xs leading-5">
+        {os === 'ios'
+          ? 'iOS 26+: native Liquid Glass (expo-glass-effect GlassView); iOS < 26: expo-blur. The web replica is CSS blur + saturation with a bright rim — no lensing.'
+          : 'Android: no reliable backdrop blur → translucent bg-background/90 + border + shadow. The web preview draws exactly that.'}
+      </Text>
+    </PreviewStack>
+  );
+}
+
 function Logo() {
   return (
     <PreviewStack>
@@ -130,6 +196,7 @@ function Logo() {
 
 export const previews: Preview[] = [
   { name: 'Type', component: Types },
+  { name: 'Glass · over content', component: GlassOverContent },
   { name: 'Lumin Logo', component: Logo },
 ];
 
