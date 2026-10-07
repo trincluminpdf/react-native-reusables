@@ -52,12 +52,15 @@ import {
 import * as React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
-/** Phone-shaped frame so the demo reads as a screen; leaves room for the carousel bar below. */
+/**
+ * The demo screen, edge to edge (previews are `fullBleed`): its App Bar sits right under the page
+ * header, no card-in-a-phone. The carousel reserves the variant bar's height below it.
+ */
 function Screen({ children, muted }: { children: React.ReactNode; muted?: boolean }) {
   return (
     <View
       className={
-        'border-border mb-[84px] mt-2 w-full max-w-[390px] flex-1 overflow-hidden rounded-[28px] border ' +
+        'border-border w-full max-w-[640px] flex-1 self-center overflow-hidden border-b ' +
         (muted ? 'bg-muted' : 'bg-background')
       }>
       {children}
@@ -373,8 +376,8 @@ function Viewer() {
 }
 
 export const previews: Preview[] = [
-  { name: 'Viewer → Mark up → Text highlight', component: Viewer },
-  { name: 'Home', component: Home },
-  { name: 'Tools', component: Tools },
-  { name: 'Search', component: Search },
+  { name: 'Viewer → Mark up → Text highlight', component: Viewer, fullBleed: true },
+  { name: 'Home', component: Home, fullBleed: true },
+  { name: 'Tools', component: Tools, fullBleed: true },
+  { name: 'Search', component: Search, fullBleed: true },
 ];

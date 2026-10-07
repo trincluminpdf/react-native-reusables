@@ -8,7 +8,7 @@ import { ArrowSquareOutIcon } from 'phosphor-react-native';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
-type Preview = { name: string; component: () => React.JSX.Element };
+type Preview = { name: string; component: () => React.JSX.Element; fullBleed?: boolean };
 
 /**
  * One component page = link to its Figma page + carousel of previews.

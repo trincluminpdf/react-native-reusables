@@ -17,7 +17,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type Preview = { name: string; component: (props: unknown) => React.JSX.Element };
+type Preview = {
+  name: string;
+  component: (props: unknown) => React.JSX.Element;
+  /** Fill the page edge to edge (whole-screen demos) instead of centering with side padding. */
+  fullBleed?: boolean;
+};
 
 type PreviewCarouselProps = {
   previews: Preview[];
@@ -36,6 +41,9 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
   const [inShell, setInShell] = useState(false);
   React.useEffect(() => setInShell(isShellFrame()), []);
   const bottomInset = Math.max(insets.bottom, inShell ? SHELL_SAFE_BOTTOM : 0);
+  // The variant bar floats over the list; previews keep clear of it using its measured height
+  // (it grows with the safe area, so a fixed margin is not enough).
+  const [barHeight, setBarHeight] = useState(0);
 
   function onScroll(ev: NativeSyntheticEvent<NativeScrollEvent>) {
     if (!width) return;
@@ -59,16 +67,30 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
   const renderItem = React.useCallback(
     ({ item }: ListRenderItemInfo<Preview>) => {
       const Component = item.component;
+      // Web: reserve the whole bar. Native: the list already pads pb-12 + safe area below.
+      const reserved =
+        Platform.OS === 'web'
+          ? barHeight
+          : item.fullBleed && !removeBottomSafeArea
+            ? Math.max(0, barHeight - 48 - insets.bottom)
+            : 0;
       return (
         <View
-          className="native:flex-1 items-center justify-center px-4"
+          className={cn(
+            'native:flex-1',
+            item.fullBleed ? 'items-stretch' : 'items-center justify-center px-4'
+          )}
           // On web a horizontal list doesn't stretch its items vertically, so size them explicitly.
-          style={{ width, height: Platform.OS === 'web' && height ? height : undefined }}>
+          style={{
+            width,
+            height: Platform.OS === 'web' && height ? height : undefined,
+            paddingBottom: reserved,
+          }}>
           <Component />
         </View>
       );
     },
-    [width, height]
+    [width, height, barHeight, insets.bottom, removeBottomSafeArea]
   );
 
   const getItemLayout = React.useCallback(
@@ -98,7 +120,8 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
         contentContainerClassName={cn(!removeBottomSafeArea && 'native:pb-12 mb-safe')}
       />
       <View
-        className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between gap-3 px-4"
+        className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between gap-3 px-4 pt-3"
+        onLayout={(e) => setBarHeight(e.nativeEvent.layout.height)}
         style={{ paddingBottom: bottomInset + BAR_GAP }}>
         <View className="bg-background rounded-md">
           <Button
