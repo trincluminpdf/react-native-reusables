@@ -1,4 +1,8 @@
 // ◆ Lumin: icons are Phosphor (DS-002) instead of Lucide.
+// ◆ Lumin (web): touch long-press opens the menu (500ms, 10px slop — the base kit cancels on any
+//   finger jitter, iOS Safari never fires `contextmenu`, and a Trigger `onLongPress` made
+//   react-native-web swallow Android's `contextmenu`), and the menu is kept inside the viewport
+//   horizontally (the base kit only flips left/right, so a 224px menu on a 390px phone got clipped).
 import { Icon } from '@/registry/nativewind/components/ui/icon';
 import { NativeOnlyAnimatedView } from '@/registry/nativewind/components/ui/native-only-animated-view';
 import { TextClassContext } from '@/registry/nativewind/components/ui/text';
@@ -23,7 +27,106 @@ import { FadeIn, ReduceMotion } from 'react-native-reanimated';
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
 
 const ContextMenu = ContextMenuPrimitive.Root;
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
+const LONG_PRESS_MS = 500;
+const LONG_PRESS_SLOP = 10;
+
+type WebPointerEvent = {
+  pointerType: string;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  isPrimary?: boolean;
+  currentTarget: unknown;
+};
+
+function setRef<T>(ref: React.Ref<T> | undefined, value: T) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) (ref as React.RefObject<T>).current = value;
+}
+
+function ContextMenuTrigger({
+  ref,
+  style,
+  onLongPress,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
+  const nodeRef = React.useRef<HTMLElement | null>(null);
+  const press = React.useRef<{ id: number; x: number; y: number; timer: number } | null>(null);
+
+  const composedRef = React.useCallback(
+    (node: any) => {
+      nodeRef.current = node;
+      setRef(ref as React.Ref<any>, node);
+    },
+    [ref]
+  );
+
+  React.useEffect(() => () => clear(), []);
+
+  if (Platform.OS !== 'web') {
+    return (
+      <ContextMenuPrimitive.Trigger ref={ref} style={style} onLongPress={onLongPress} {...props} />
+    );
+  }
+
+  function clear() {
+    if (press.current) window.clearTimeout(press.current.timer);
+    press.current = null;
+  }
+
+  // `onLongPress` is NOT passed to the web Pressable: with it, react-native-web calls
+  // preventDefault() on touch `contextmenu`, which stops Radix from opening (Android long-press).
+  const p = props as Record<string, any>;
+  const webHandlers = {
+    onPointerDown: (e: WebPointerEvent) => {
+      p.onPointerDown?.(e);
+      if (props.disabled || e.pointerType === 'mouse' || e.isPrimary === false) return;
+      clear();
+      const { clientX, clientY } = e;
+      press.current = {
+        id: e.pointerId,
+        x: clientX,
+        y: clientY,
+        timer: window.setTimeout(() => {
+          press.current = null;
+          onLongPress?.(e as any);
+          // Radix opens on `contextmenu` at the event's point.
+          nodeRef.current?.dispatchEvent(
+            new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX, clientY })
+          );
+          (navigator as any).vibrate?.(10);
+        }, LONG_PRESS_MS),
+      };
+    },
+    onPointerMove: (e: WebPointerEvent) => {
+      p.onPointerMove?.(e);
+      const s = press.current;
+      if (s && s.id === e.pointerId && Math.hypot(e.clientX - s.x, e.clientY - s.y) > LONG_PRESS_SLOP) clear();
+    },
+    onPointerUp: (e: WebPointerEvent) => {
+      p.onPointerUp?.(e);
+      clear();
+    },
+    onPointerCancel: (e: WebPointerEvent) => {
+      p.onPointerCancel?.(e);
+      clear();
+    },
+  };
+
+  return (
+    <ContextMenuPrimitive.Trigger
+      ref={composedRef}
+      // No text selection / iOS callout while holding — those cancel the press.
+      style={StyleSheet.flatten([
+        { userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' } as any,
+        style as any,
+      ])}
+      {...props}
+      {...(webHandlers as any)}
+    />
+  );
+}
+
 const ContextMenuGroup = ContextMenuPrimitive.Group;
 const ContextMenuSub = ContextMenuPrimitive.Sub;
 const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
@@ -87,17 +190,64 @@ function ContextMenuSubContent({
 
 const FullWindowOverlay = Platform.OS === 'ios' ? RNFullWindowOverlay : React.Fragment;
 
+/** Web: shift the menu sideways so it stays inside the viewport (+ insets). Returns a cleanup. */
+function keepInViewportX(el: HTMLElement, insetLeft = 8, insetRight = 8) {
+  let frame = 0;
+  let mo: MutationObserver | undefined;
+  const apply = () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      const wrapper = el.closest('[data-radix-popper-content-wrapper]') as HTMLElement | null;
+      const box = (wrapper?.firstElementChild as HTMLElement | null) ?? el.parentElement;
+      if (!box) return;
+      if (wrapper && !mo) {
+        // Radix re-positions the wrapper (transform) on open / scroll / resize.
+        mo = new MutationObserver(apply);
+        mo.observe(wrapper, { attributes: true, attributeFilter: ['style'] });
+      }
+      const r = box.getBoundingClientRect();
+      const vw = document.documentElement.clientWidth;
+      let dx = 0;
+      if (r.right > vw - insetRight) dx = vw - insetRight - r.right;
+      if (r.left + dx < insetLeft) dx = insetLeft - r.left;
+      el.style.left = dx ? `${dx}px` : '';
+    });
+  };
+  apply();
+  window.addEventListener('resize', apply);
+  return () => {
+    cancelAnimationFrame(frame);
+    mo?.disconnect();
+    window.removeEventListener('resize', apply);
+  };
+}
+
 function ContextMenuContent({
   className,
   overlayClassName,
   overlayStyle,
   portalHost,
+  ref,
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Content> & {
     overlayStyle?: StyleProp<ViewStyle>;
     overlayClassName?: string;
     portalHost?: string;
   }) {
+  const insetLeft = props.insets?.left;
+  const insetRight = props.insets?.right;
+  const composedRef = React.useCallback(
+    (node: any) => {
+      setRef(ref as React.Ref<any>, node);
+      if (!node || Platform.OS !== 'web') return;
+      const stop = keepInViewportX(node as HTMLElement, insetLeft ?? 8, insetRight ?? 8);
+      return () => {
+        stop();
+        setRef(ref as React.Ref<any>, null);
+      };
+    },
+    [ref, insetLeft, insetRight]
+  );
   return (
     <ContextMenuPrimitive.Portal hostName={portalHost}>
       <FullWindowOverlay>
@@ -128,6 +278,7 @@ function ContextMenuContent({
                   className
                 )}
                 {...props}
+                ref={composedRef}
               />
             </TextClassContext.Provider>
           </NativeOnlyAnimatedView>
