@@ -1,6 +1,7 @@
 import type { Preview } from '@showcase/components/component-page';
 
 import { previews as accordion } from './accordion';
+import { previews as actionSheet } from './action-sheet';
 import { previews as alertDialog } from './alert-dialog';
 import { previews as alert } from './alert';
 import { previews as avatar } from './avatar';
@@ -9,6 +10,8 @@ import { previews as button } from './button';
 import { previews as calendar } from './calendar';
 import { previews as card } from './card';
 import { previews as checkbox } from './checkbox';
+import { previews as chip } from './chip';
+import { previews as circularProgress } from './circular-progress';
 import { previews as collapsible } from './collapsible';
 import { previews as contextMenu } from './context-menu';
 import { previews as datePicker } from './date-picker';
@@ -16,6 +19,7 @@ import { previews as dialog } from './dialog';
 import { previews as drawer } from './drawer';
 import { previews as dropdownMenu } from './dropdown-menu';
 import { previews as empty } from './empty';
+import { previews as fab } from './fab';
 import { previews as field } from './field';
 import { previews as fullscreenModal } from './fullscreen-modal';
 import { previews as inputGroup } from './input-group';
@@ -23,6 +27,8 @@ import { previews as inputOtp } from './input-otp';
 import { previews as input } from './input';
 import { previews as item } from './item';
 import { previews as label } from './label';
+import { previews as navigationRail } from './navigation-rail';
+import { previews as pageControl } from './page-control';
 import { previews as loader } from './loader';
 import { previews as popover } from './popover';
 import { previews as progress } from './progress';
@@ -35,9 +41,11 @@ import { previews as slider } from './slider';
 import { previews as sonner } from './sonner';
 import { previews as spinner } from './spinner';
 import { previews as splashScreen } from './splash-screen';
+import { previews as stepper } from './stepper';
 import { previews as switchPreviews } from './switch';
 import { previews as tabs } from './tabs';
 import { previews as textarea } from './textarea';
+import { previews as timePicker } from './time-picker';
 import { previews as toggleGroup } from './toggle-group';
 import { previews as toggle } from './toggle';
 import { previews as tooltip } from './tooltip';
@@ -63,6 +71,7 @@ import { previews as colorPicker } from './color-picker';
 /** slug (lib/constants COMPONENTS) → previews. One file per Figma page. */
 export const PREVIEWS: Record<string, Preview[]> = {
   accordion: accordion,
+  'action-sheet': actionSheet,
   'alert-dialog': alertDialog,
   alert: alert,
   avatar: avatar,
@@ -71,6 +80,8 @@ export const PREVIEWS: Record<string, Preview[]> = {
   calendar: calendar,
   card: card,
   checkbox: checkbox,
+  chip: chip,
+  'circular-progress': circularProgress,
   collapsible: collapsible,
   'context-menu': contextMenu,
   'date-picker': datePicker,
@@ -78,6 +89,7 @@ export const PREVIEWS: Record<string, Preview[]> = {
   drawer: drawer,
   'dropdown-menu': dropdownMenu,
   empty: empty,
+  fab: fab,
   field: field,
   'fullscreen-modal': fullscreenModal,
   'input-group': inputGroup,
@@ -85,6 +97,8 @@ export const PREVIEWS: Record<string, Preview[]> = {
   'input': input,
   'item': item,
   'label': label,
+  'navigation-rail': navigationRail,
+  'page-control': pageControl,
   'loader': loader,
   'popover': popover,
   'progress': progress,
@@ -97,9 +111,11 @@ export const PREVIEWS: Record<string, Preview[]> = {
   sonner: sonner,
   spinner: spinner,
   'splash-screen': splashScreen,
+  stepper: stepper,
   switch: switchPreviews,
   tabs: tabs,
   textarea: textarea,
+  'time-picker': timePicker,
   'toggle-group': toggleGroup,
   toggle: toggle,
   tooltip: tooltip,

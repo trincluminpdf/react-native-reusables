@@ -1103,3 +1103,5 @@ function M3TextButton({
 }
 
 export { AndroidDatePickerDialog, IOSCompactPicker, IOSInlineCalendar };
+// Shared with time-picker-replica.tsx (same OS colours, fonts and M3 buttons).
+export { IOS, IOS_FONT, M3, M3IconButton, M3TextButton, ROBOTO, useScheme };

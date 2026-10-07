@@ -25,8 +25,8 @@ Every component file starts with a header comment listing its ◆ Lumin deltas �
 The preview shows no status chips — only the ◆ prefix and a small **New** tag. `status` in `lib/constants.ts` mirrors the Figma page header chip:
 
 - **RNR / RNR + Custom** — from the base kit (react-native-reusables), with or without Lumin deltas — no prefix.
-- **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker, Calendar, Fullscreen Modal, Splash Screen).
-- **◆ New** — the latest batch only (now: the In-app components). When the next batch lands, set the previous New items to Custom here **and** in the Figma page header (Status chip), so the New tag always means "just added".
+- **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker, Calendar, Fullscreen Modal, Splash Screen, all In-app ◆ components).
+- **◆ New** — the latest batch only (now: the M3 / HIG gap batch below; the In-app components moved to Custom). When the next batch lands, set the previous New items to Custom here **and** in the Figma page header (Status chip), so the New tag always means "just added".
 
 ## In-app ◆ (Oct 2026)
 
@@ -52,10 +52,27 @@ Figma section `--- In-app ◆` (pages after Typography) = app-screen components 
 
 Some parts are drawn by the OS or look different per OS. On the web preview an **iOS | Android** switch picks which one you see:
 
-- **Where**: desktop top bar (next to New tab) — also swaps the phone chrome (iPhone: Dynamic Island + home indicator · Android: punch-hole status bar + gesture handle, smaller corners, 24 vs 34 bottom inset). Phone web: at the top of pages with native parts (`native: true` in `lib/constants.ts`: Date Picker, App Bar, Nav Bar, Toolbar, Showcase demo).
-- **What changes**: ◆ Date Picker (system picker replicas + per-platform previews — `platform: 'ios' | 'android'` on a `Preview` hides it on the other OS) and liquid glass.
+- **Where**: desktop top bar (next to New tab) — also swaps the phone chrome (iPhone: Dynamic Island + home indicator · Android: punch-hole status bar + gesture handle, smaller corners, 24 vs 34 bottom inset). Phone web: at the top of pages with native parts (`native: true` in `lib/constants.ts`: Date Picker, Time Picker, App Bar, Nav Bar, Toolbar, Showcase demo).
+- **What changes**: ◆ Date Picker and ◆ Time Picker (system picker replicas + per-platform previews — `platform: 'ios' | 'android'` on a `Preview` hides it on the other OS) and liquid glass.
 - **Start value**: `?platform=ios|android` → (inside the desktop frame) the shell's value → saved choice (`localStorage` `lumin-ds-platform`) → the device (Android phones open as Android, everything else as iOS). Picking one saves it and drops `?platform=` from the address. The shell tells the frame with `postMessage` `lumin-ds:platform`.
 - **Native**: `usePreviewPlatform()` always returns the real `Platform.OS` — the switch never changes device behaviour.
+
+## M3 / Apple HIG gap batch (Oct 2026, ◆ New)
+
+Checked the Material 3 component list (m3.material.io/components) and the Apple HIG components (iOS / iPadOS) against this library. Built the 8 gaps that matter for a mobile PDF app; Button Group, Carousel, Combobox, Menubar, Sidebar and Charts stay dropped for v1, split button was rejected in the Toolbar research, and system experiences (widgets, Live Activities…) are out of scope.
+
+| Figma page (core section) | Code (`packages/registry/src/nativewind/components/ui/`) | Notes |
+| --- | --- | --- |
+| ◆ FAB (FAB, FAB Menu / Item, FAB Menu) | `fab.tsx` — `Fab`, `FabMenu`, `FabMenuItem` | M3. Circle / pill (like the Nav Bar Upload FAB). Default / Secondary / Glass; Medium 80; Extended with `label`. Caller positions it. |
+| ◆ Navigation Rail | `navigation-rail.tsx` — `NavigationRail`, `NavigationRailItem` | M3 collapsed rail, w-20, same tabs as Nav Bar. (recommendation) wide windows only. |
+| ◆ Action Sheet | `action-sheet.tsx` — `ActionSheet`, `ActionSheetAction` | Built on Drawer. `type="confirm"` (HIG, Buttons, destructive first) / `"menu"` (M3 list, destructive last). |
+| ◆ Stepper | `stepper.tsx` — `Stepper` | HIG. `type="default"` shows the value (◆), `"compact"` = UIStepper look. Long-press repeats. |
+| ◆ Time Picker | `time-picker.tsx` — `TimePicker`, `TimePickerTrigger` (+ web replicas `time-picker-replica.tsx`) | Native like Date Picker: Android M3 time dialog (dial), iOS wheels (`display="spinner"`) in Drawer or `iosDisplay="compact"`. Web follows the iOS \| Android switch (`native: true`). |
+| ◆ Circular Progress | `circular-progress.tsx` — `CircularProgress` | Determinate ring (react-native-svg): sm 24 / default 40 / lg 64 + label. Indeterminate stays Spinner. |
+| ◆ Page Control | `page-control.tsx` — `PageControl` | HIG dots; current = pill (◆). Minimal / Prominent (glass). |
+| ◆ Chip (Assist Chip, Input Chip) | `chip.tsx` — `Chip`, `ChipGroup` | M3 assist / input chips (Filter Chip already exists). Input chip remove = sibling button. |
+
+Figma tokens: `fab/*`, `fab-menu/*`, `nav-rail/*`, `action-sheet/*`, `stepper/*`, `time-picker/*`, `circular-progress/*`, `page-control/*`, `chip/*` in 5. Component (129 new). Previews: `examples/<slug>.tsx`.
 
 ## Desktop preview (web ≥ 1024px)
 
