@@ -78,7 +78,9 @@ function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCaro
         <View
           className={cn(
             'native:flex-1',
-            item.fullBleed ? 'items-stretch' : 'items-center justify-center px-4'
+            // No side padding here: PreviewStack's ScrollView spans the full page and pads its content,
+            // otherwise the scroll view's edge clips focus rings / shadows of full-width controls.
+            item.fullBleed ? 'items-stretch' : 'items-center justify-center'
           )}
           // On web a horizontal list doesn't stretch its items vertically, so size them explicitly.
           style={{

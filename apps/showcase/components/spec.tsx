@@ -30,12 +30,17 @@ function Spec({
   );
 }
 
-/** Vertical stack that scrolls when the preview is taller than the screen. */
+/**
+ * Vertical stack that scrolls when the preview is taller than the screen.
+ * The scroll view spans the whole page width and the 16px side gutter lives INSIDE it: a scroll
+ * view clips on both axes, so with the gutter outside, full-width controls lost the left/right
+ * edge of their focus ring (3px) and shadows.
+ */
 function PreviewStack({ className, children, ...props }: ViewProps) {
   return (
     <ScrollView
       className="w-full"
-      contentContainerClassName="min-h-full justify-center py-6 pb-24"
+      contentContainerClassName="min-h-full justify-center px-4 py-6 pb-24"
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled">
       <View className={cn('mx-auto w-full max-w-sm gap-6', className)} {...props}>
