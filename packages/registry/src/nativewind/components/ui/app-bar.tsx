@@ -6,6 +6,14 @@
  * Disabled when nothing to undo; titles use text-base (no 10–11px labels).
  * Compose: <AppBar> + <AppBarGroup> (glass pill) + <AppBarButton> (40px icon button) + <AppBarTitle>,
  * or use the ready-made <AppBarSearchField> / <AppBarWorkspace>.
+ * ✏️ LPM source batch (Oct 2026):
+ * - Type=Title: <AppBarCentered leading title trailing> keeps the title optically centred on the bar
+ *   (equal Leading / Trailing slots = the wider side; title one line, truncates before the slots).
+ * - Leading / Trailing action = Text: <AppBarTextButton> = Button Ghost sm in a glass pill, e.g.
+ *   "Cancel" (leading, task flows: Prepare form, Sign) and "Select all" / "Done" / "Apply" (trailing).
+ *   One text action per side, ≤ 12 characters.
+ * - Type=Viewer: <AppBarFileTitle> shows the file name between Home and the actions on Tablet only
+ *   (app-bar/viewer-show-title = `hidden sm:flex`; phones keep the bar chrome-light).
  */
 import { Button } from '@/registry/nativewind/components/ui/button';
 import { Glass } from '@/registry/nativewind/components/ui/glass';
@@ -61,6 +69,74 @@ function AppBarTitle({ className, ...props }: React.ComponentProps<typeof Text>)
       role="heading"
       numberOfLines={1}
       className={cn('text-foreground flex-1 text-center text-base font-semibold', className)}
+      {...props}
+    />
+  );
+}
+
+/** Text action in a glass pill (Leading / Trailing action = Text): Button Ghost sm. */
+function AppBarTextButton({
+  label,
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof Button>, 'children' | 'size' | 'variant'> & { label: string }) {
+  return (
+    <Glass>
+      <Button variant="ghost" size="sm" className={cn('rounded-full', className)} {...props}>
+        <Text>{label}</Text>
+      </Button>
+    </Glass>
+  );
+}
+
+/**
+ * Type=Title layout: equal side slots (width = the wider side's content) so the title is centred on the
+ * bar whatever sits left / right; the title takes what is left and truncates with "…".
+ */
+function AppBarCentered({
+  leading,
+  title,
+  trailing,
+  className,
+}: {
+  leading?: React.ReactNode;
+  title: string;
+  trailing?: React.ReactNode;
+  className?: string;
+}) {
+  const [sides, setSides] = React.useState({ leading: 0, trailing: 0 });
+  const side = Math.max(sides.leading, sides.trailing);
+  const measure =
+    (key: 'leading' | 'trailing') => (e: { nativeEvent: { layout: { width: number } } }) => {
+      const w = Math.ceil(e.nativeEvent.layout.width);
+      setSides((s) => (s[key] === w ? s : { ...s, [key]: w }));
+    };
+  return (
+    <AppBar className={className}>
+      <View style={{ width: side }} className="flex-row justify-start">
+        <View onLayout={measure('leading')} className="flex-row">
+          {leading}
+        </View>
+      </View>
+      <AppBarTitle className="min-w-0 flex-1">{title}</AppBarTitle>
+      <View style={{ width: side }} className="flex-row justify-end">
+        <View onLayout={measure('trailing')} className="flex-row">
+          {trailing}
+        </View>
+      </View>
+    </AppBar>
+  );
+}
+
+/** Type=Viewer file title — Tablet only (`hidden sm:flex`), left-aligned, one line. */
+function AppBarFileTitle({ className, ...props }: React.ComponentProps<typeof Text>) {
+  return (
+    <Text
+      numberOfLines={1}
+      className={cn(
+        'text-foreground hidden min-w-0 flex-1 px-2 text-left text-base font-semibold sm:flex',
+        className
+      )}
       {...props}
     />
   );
@@ -138,4 +214,14 @@ function AppBarSearchField({
   );
 }
 
-export { AppBar, AppBarButton, AppBarGroup, AppBarSearchField, AppBarTitle, AppBarWorkspace };
+export {
+  AppBar,
+  AppBarButton,
+  AppBarCentered,
+  AppBarFileTitle,
+  AppBarGroup,
+  AppBarSearchField,
+  AppBarTextButton,
+  AppBarTitle,
+  AppBarWorkspace,
+};

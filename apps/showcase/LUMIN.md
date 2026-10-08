@@ -26,7 +26,7 @@ The preview shows no status chips — only the ◆ prefix and a small **New** ta
 
 - **RNR / RNR + Custom** — from the base kit (react-native-reusables), with or without Lumin deltas — no prefix.
 - **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker, Calendar, Fullscreen Modal, Splash Screen, all In-app ◆ components).
-- **◆ New** — the latest batch only (now: the M3 / HIG gap batch below; the In-app components moved to Custom). When the next batch lands, set the previous New items to Custom here **and** in the Figma page header (Status chip), so the New tag always means "just added".
+- **◆ New** — the latest batch only (now: the LPM source batch below; the M3 / HIG gap batch and the In-app components moved to Custom). When the next batch lands, set the previous New items to Custom here **and** in the Figma page header (Status chip), so the New tag always means "just added".
 
 ## In-app ◆ (Oct 2026)
 
@@ -57,7 +57,29 @@ Some parts are drawn by the OS or look different per OS. On the web preview an *
 - **Start value**: `?platform=ios|android` → (inside the desktop frame) the shell's value → saved choice (`localStorage` `lumin-ds-platform`) → the device (Android phones open as Android, everything else as iOS). Picking one saves it and drops `?platform=` from the address. The shell tells the frame with `postMessage` `lumin-ds:platform`.
 - **Native**: `usePreviewPlatform()` always returns the real `Platform.OS` — the switch never changes device behaviour.
 
-## M3 / Apple HIG gap batch (Oct 2026, ◆ New)
+## LPM source batch (Oct 2026, ◆ New)
+
+Components found in the LPM-xxx Lumin PDF Mobile design files (Home, Document list, Viewer, Page tool, Outline, Comments, Prepare form, Signature, Share / Workspace, Notifications), corrected for the source's visual / logic issues. Figma pages are marked 🆕 (new) / ✏️ (edited) in PDF-Mobile-DS. Listed under **In-app** with the **New** tag.
+
+| Figma page | Code (`packages/registry/src/nativewind/components/ui/`) | Notes |
+| --- | --- | --- |
+| 🆕 Showcase flows | `examples/showcase-flows.tsx` | 5 interactive phone flows: F1 Open & mark up · F2 Find your way · F3 Comments · F4 Organize pages · F5 Prepare form & sign. The violet "◆ step" pill is demo chrome. |
+| 🆕 Page Thumbnail | `page-thumbnail.tsx` | Page tool grid tile: Default / Current / Selected, Portrait / Landscape, select mode checkbox on a plate, bookmark. |
+| 🆕 Member Item | `member-item.tsx` | People / access lists: More · Permission · Label · Actions (inline / below) · None; Selected = check circle + bg-accent. |
+| 🆕 Outline Item | `outline-item.tsx` | Outline sheet row: Default / Edit (checkbox + handle), Expand None / Collapsed / Expanded, depth indent pl-6. |
+| 🆕 Annotation Selection | `annotation-selection.tsx` | Selection frame (base/pdf → `pdf` color): 8 resize handles + rotate handle (Top/Right/Bottom/Left); `onChange` = drag to move / resize. |
+| 🆕 Form Field | `form-field.tsx` (+ `TextTPlusIcon`, `SignatureInk`) | Fields on the page: Text / Signature / Checkbox / Radio × Build / Empty / Filled. |
+| 🆕 Comment Item | `comment-item.tsx` | Card (list) / Detail (thread), Resolved, `showResolve` off on replies. |
+| 🆕 Signature | `signature-item.tsx`, `signature-validation.tsx` | Saved signatures (Draw / Type / Image / Failed × Default / Edit / Delete) + certificate entries (Valid / Invalid, expandable). "Type" uses Great Vibes (web: Google Fonts). |
+| 🆕 Hint | `hint.tsx` | One-line guidance under the top bar: Info / Neutral × Full / Compact, optional action + dismiss. |
+| 🆕 Notification Item | `notification-item.tsx` | Unread / Read × Avatar / Icon, optional Decline / Accept. |
+| ✏️ Document Item | `document-item.tsx` | + select mode (`selectable`, `selected`, `onLongPress`) and upload queue (`upload`: queued / uploading / processing / uploaded / failed). |
+| ✏️ Toolbar | `toolbar.tsx` | + `ToolbarAction` (Type=Actions), `ToolbarPlayer`, `ToolbarSearch`; `ToolbarTools showClose={false}`; `styleColor={null}` = Color Swatch None (object selected). |
+| ✏️ App Bar | `app-bar.tsx` | + `AppBarCentered` (title centred on the bar), `AppBarTextButton` (Leading / Trailing action = Text), `AppBarFileTitle` (Viewer title, Tablet only). |
+
+Tokens: `page-thumbnail/*`, `member-item/*`, `outline-item/*`, `annotation-selection/*`, `form-field/*`, `comment-item/*`, `signature-item/*`, `signature-validation/*`, `hint/*`, `notification-item/*` + new `document-item/*`, `toolbar/*`, `app-bar/viewer-show-title` in 5. Component. New theme color `--pdf` (3. Mode › base/pdf, light #3b82f6 / dark #bfdbfe) for the selection frame. Status glyphs use Tailwind green-600 / amber-600 (approved exception).
+
+## M3 / Apple HIG gap batch (Oct 2026, ◆ Custom)
 
 Checked the Material 3 component list (m3.material.io/components) and the Apple HIG components (iOS / iPadOS) against this library. Built the 8 gaps that matter for a mobile PDF app; Button Group, Carousel, Combobox, Menubar, Sidebar and Charts stay dropped for v1, split button was rejected in the Toolbar research, and system experiences (widgets, Live Activities…) are out of scope.
 

@@ -2,9 +2,11 @@ import { Avatar, AvatarFallback } from '@/registry/nativewind/components/ui/avat
 import {
   AppBar,
   AppBarButton,
+  AppBarCentered,
+  AppBarFileTitle,
   AppBarGroup,
   AppBarSearchField,
-  AppBarTitle,
+  AppBarTextButton,
   AppBarWorkspace,
 } from '@/registry/nativewind/components/ui/app-bar';
 import { LuminLogo } from '@/registry/nativewind/components/ui/lumin-logo';
@@ -21,6 +23,7 @@ import {
   MagnifyingGlassIcon,
   SparkleIcon,
   SpeakerHighIcon,
+  XIcon,
 } from 'phosphor-react-native';
 import * as React from 'react';
 import { View } from 'react-native';
@@ -57,17 +60,21 @@ function Types() {
           <HomeBar />
         </Backdrop>
       </Spec>
-      <Spec label="◆ Type=Title">
+      <Spec label="◆ Type=Title · title centred on the bar">
         <Backdrop>
-          <AppBar>
-            <AppBarGroup>
-              <AppBarButton icon={ArrowLeftIcon} accessibilityLabel="Back" />
-            </AppBarGroup>
-            <AppBarTitle>Settings</AppBarTitle>
-            <AppBarGroup>
-              <AppBarButton icon={DotsThreeIcon} accessibilityLabel="More" />
-            </AppBarGroup>
-          </AppBar>
+          <AppBarCentered
+            title="Settings"
+            leading={
+              <AppBarGroup>
+                <AppBarButton icon={ArrowLeftIcon} accessibilityLabel="Back" />
+              </AppBarGroup>
+            }
+            trailing={
+              <AppBarGroup>
+                <AppBarButton icon={DotsThreeIcon} accessibilityLabel="More" />
+              </AppBarGroup>
+            }
+          />
         </Backdrop>
       </Spec>
       <Spec label="◆ Type=Search">
@@ -83,12 +90,13 @@ function Types() {
           </AppBar>
         </Backdrop>
       </Spec>
-      <Spec label="◆ Type=Viewer">
+      <Spec label="◆ Type=Viewer · file title on Tablet only (window ≥ 640)">
         <Backdrop>
           <AppBar>
             <AppBarGroup>
               <AppBarButton icon={HouseIcon} accessibilityLabel="Home" />
             </AppBarGroup>
+            <AppBarFileTitle>Lease agreement.pdf</AppBarFileTitle>
             <AppBarGroup>
               <AppBarButton icon={MagnifyingGlassIcon} accessibilityLabel="Search in document" />
               <AppBarButton icon={SparkleIcon} accessibilityLabel="Lumin AI" />
@@ -109,6 +117,49 @@ function Types() {
               <AppBarButton icon={ArrowUUpRightIcon} accessibilityLabel="Redo" disabled />
             </AppBarGroup>
           </AppBar>
+        </Backdrop>
+      </Spec>
+    </PreviewStack>
+  );
+}
+
+/** ✏️ LPM batch: Leading / Trailing action = Text (Type=Title). */
+function TextActions() {
+  return (
+    <PreviewStack>
+      <Spec label="◆ Trailing action=Text · select mode (X · 2 selected · Select all)">
+        <Backdrop>
+          <AppBarCentered
+            title="2 selected"
+            leading={
+              <AppBarGroup>
+                <AppBarButton icon={XIcon} accessibilityLabel="Exit select mode" />
+              </AppBarGroup>
+            }
+            trailing={<AppBarTextButton label="Select all" />}
+          />
+        </Backdrop>
+      </Spec>
+      <Spec label="◆ Leading action=Text · Trailing action=Text · task flow (Prepare form)">
+        <Backdrop>
+          <AppBarCentered
+            title="Prepare form"
+            leading={<AppBarTextButton label="Cancel" />}
+            trailing={<AppBarTextButton label="Apply" />}
+          />
+        </Backdrop>
+      </Spec>
+      <Spec label="◆ Leading action=Text · Trailing action=Icon · long title truncates">
+        <Backdrop>
+          <AppBarCentered
+            title="Q3 Vendor Agreement — signed copy final v2.pdf"
+            leading={<AppBarTextButton label="Cancel" />}
+            trailing={
+              <AppBarGroup>
+                <AppBarButton icon={DotsThreeIcon} accessibilityLabel="More" />
+              </AppBarGroup>
+            }
+          />
         </Backdrop>
       </Spec>
     </PreviewStack>
@@ -196,6 +247,7 @@ function Logo() {
 
 export const previews: Preview[] = [
   { name: 'Type', component: Types },
+  { name: 'Leading / Trailing action=Text', component: TextActions },
   { name: 'Glass · over content', component: GlassOverContent },
   { name: 'Lumin Logo', component: Logo },
 ];

@@ -4,8 +4,9 @@
  * `status` mirrors the Figma page header chip:
  *   RNR = straight from react-native-reusables · RNR + Custom = RNR with ◆ Lumin deltas ·
  *   Custom = not in RNR (◆, dev builds it) · New = the latest batch designed fresh for mobile
- *   (now: the M3 / Apple HIG gap batch — Action Sheet, Chip, Circular Progress, FAB, Navigation Rail,
- *   Page Control, Stepper, Time Picker).
+ *   (now: the LPM source batch — Page Thumbnail, Member Item, Outline Item, Annotation Selection,
+ *   Form Field, Comment Item, Signature, Hint, Notification Item + Showcase flows; the M3 / Apple HIG
+ *   gap batch moved to Custom).
  *   When a newer batch lands, the previous New items move to Custom (Figma page header chip too).
  * `group: 'in-app'` = Figma section "--- In-app ◆" (app screens: Home, Viewer, annotation tools).
  */
@@ -15,7 +16,7 @@ export type ComponentStatus = 'RNR' | 'RNR + Custom' | 'Custom' | 'New';
 
 export const COMPONENTS = [
   { slug: 'accordion', name: 'Accordion', figma: '6-4', status: 'RNR + Custom' },
-  { slug: 'action-sheet', name: 'Action Sheet', figma: '155-6', status: 'New' },
+  { slug: 'action-sheet', name: 'Action Sheet', figma: '155-6', status: 'Custom' },
   { slug: 'alert', name: 'Alert', figma: '6-5', status: 'RNR + Custom' },
   { slug: 'alert-dialog', name: 'Alert Dialog', figma: '6-6', status: 'RNR + Custom' },
   { slug: 'avatar', name: 'Avatar', figma: '6-7', status: 'RNR + Custom' },
@@ -24,8 +25,8 @@ export const COMPONENTS = [
   { slug: 'calendar', name: 'Calendar', figma: '6-10', status: 'Custom' },
   { slug: 'card', name: 'Card', figma: '6-11', status: 'RNR + Custom' },
   { slug: 'checkbox', name: 'Checkbox', figma: '6-12', status: 'RNR + Custom' },
-  { slug: 'chip', name: 'Chip', figma: '155-7', status: 'New' },
-  { slug: 'circular-progress', name: 'Circular Progress', figma: '155-8', status: 'New' },
+  { slug: 'chip', name: 'Chip', figma: '155-7', status: 'Custom' },
+  { slug: 'circular-progress', name: 'Circular Progress', figma: '155-8', status: 'Custom' },
   { slug: 'collapsible', name: 'Collapsible', figma: '6-13', status: 'RNR' },
   { slug: 'context-menu', name: 'Context Menu', figma: '6-14', status: 'RNR + Custom' },
   { slug: 'date-picker', name: 'Date Picker', figma: '6-15', status: 'Custom', native: true },
@@ -33,7 +34,7 @@ export const COMPONENTS = [
   { slug: 'drawer', name: 'Drawer', figma: '6-17', status: 'Custom' },
   { slug: 'dropdown-menu', name: 'Dropdown Menu', figma: '6-18', status: 'RNR + Custom' },
   { slug: 'empty', name: 'Empty', figma: '6-19', status: 'Custom' },
-  { slug: 'fab', name: 'FAB', figma: '155-9', status: 'New' },
+  { slug: 'fab', name: 'FAB', figma: '155-9', status: 'Custom' },
   { slug: 'field', name: 'Field', figma: '6-20', status: 'Custom' },
   { slug: 'fullscreen-modal', name: 'Fullscreen Modal', figma: '6-21', status: 'Custom' },
   { slug: 'input', name: 'Input', figma: '6-22', status: 'RNR + Custom' },
@@ -43,8 +44,8 @@ export const COMPONENTS = [
   { slug: 'label', name: 'Label', figma: '6-26', status: 'RNR + Custom' },
   // ◆ Code only: Lumin brand loader (variant Lumin) — no PDF-Mobile-DS page, `figma` stays empty.
   { slug: 'loader', name: 'Loader', figma: '', status: 'Custom' },
-  { slug: 'navigation-rail', name: 'Navigation Rail', figma: '155-10', status: 'New' },
-  { slug: 'page-control', name: 'Page Control', figma: '155-11', status: 'New' },
+  { slug: 'navigation-rail', name: 'Navigation Rail', figma: '155-10', status: 'Custom' },
+  { slug: 'page-control', name: 'Page Control', figma: '155-11', status: 'Custom' },
   { slug: 'popover', name: 'Popover', figma: '6-27', status: 'RNR' },
   { slug: 'progress', name: 'Progress', figma: '6-28', status: 'RNR' },
   { slug: 'radio-group', name: 'Radio Group', figma: '6-29', status: 'RNR + Custom' },
@@ -63,11 +64,11 @@ export const COMPONENTS = [
     figmaFile: 'https://www.figma.com/design/58565Ulu9KCUG3L89AwX8g/LPA-001---App-component',
     status: 'Custom',
   },
-  { slug: 'stepper', name: 'Stepper', figma: '155-12', status: 'New' },
+  { slug: 'stepper', name: 'Stepper', figma: '155-12', status: 'Custom' },
   { slug: 'switch', name: 'Switch', figma: '6-37', status: 'RNR + Custom' },
   { slug: 'tabs', name: 'Tabs', figma: '6-38', status: 'RNR + Custom' },
   { slug: 'textarea', name: 'Textarea', figma: '6-39', status: 'RNR + Custom' },
-  { slug: 'time-picker', name: 'Time Picker', figma: '155-13', status: 'New', native: true },
+  { slug: 'time-picker', name: 'Time Picker', figma: '155-13', status: 'Custom', native: true },
   { slug: 'toggle', name: 'Toggle', figma: '6-40', status: 'RNR' },
   { slug: 'toggle-group', name: 'Toggle Group', figma: '6-41', status: 'RNR + Custom' },
   { slug: 'tooltip', name: 'Tooltip', figma: '6-42', status: 'RNR' },
@@ -169,6 +170,36 @@ export const COMPONENTS = [
     name: 'Color Picker',
     figma: '75-2932',
     status: 'Custom',
+    group: 'in-app',
+  },
+  // ◆ In-app · LPM source batch (Oct 2026, New) — Figma 🆕 pages.
+  {
+    slug: 'showcase-flows',
+    name: 'Showcase flows',
+    figma: '271-6',
+    status: 'New',
+    group: 'in-app',
+    native: true,
+  },
+  { slug: 'page-thumbnail', name: 'Page Thumbnail', figma: '197-31', status: 'New', group: 'in-app' },
+  { slug: 'member-item', name: 'Member Item', figma: '205-24', status: 'New', group: 'in-app' },
+  { slug: 'outline-item', name: 'Outline Item', figma: '212-19', status: 'New', group: 'in-app' },
+  {
+    slug: 'annotation-selection',
+    name: 'Annotation Selection',
+    figma: '216-18',
+    status: 'New',
+    group: 'in-app',
+  },
+  { slug: 'form-field', name: 'Form Field', figma: '219-23', status: 'New', group: 'in-app' },
+  { slug: 'comment-item', name: 'Comment Item', figma: '225-26', status: 'New', group: 'in-app' },
+  { slug: 'signature', name: 'Signature', figma: '230-21', status: 'New', group: 'in-app' },
+  { slug: 'hint', name: 'Hint', figma: '239-6', status: 'New', group: 'in-app' },
+  {
+    slug: 'notification-item',
+    name: 'Notification Item',
+    figma: '240-6',
+    status: 'New',
     group: 'in-app',
   },
 ] as const satisfies ReadonlyArray<{

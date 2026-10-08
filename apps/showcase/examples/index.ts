@@ -67,6 +67,17 @@ import { previews as textSelection } from './text-selection';
 import { previews as colorSwatch } from './color-swatch';
 import { previews as annotationSheet } from './annotation-sheet';
 import { previews as colorPicker } from './color-picker';
+// ◆ In-app · LPM source batch (New)
+import { previews as pageThumbnail } from './page-thumbnail';
+import { previews as memberItem } from './member-item';
+import { previews as outlineItem } from './outline-item';
+import { previews as annotationSelection } from './annotation-selection';
+import { previews as formField } from './form-field';
+import { previews as commentItem } from './comment-item';
+import { previews as signature } from './signature';
+import { previews as hint } from './hint';
+import { previews as notificationItem } from './notification-item';
+import { previews as showcaseFlows } from './showcase-flows';
 
 /** slug (lib/constants COMPONENTS) → previews. One file per Figma page. */
 export const PREVIEWS: Record<string, Preview[]> = {
@@ -137,4 +148,14 @@ export const PREVIEWS: Record<string, Preview[]> = {
   'color-swatch': colorSwatch,
   'annotation-sheet': annotationSheet,
   'color-picker': colorPicker,
+  'page-thumbnail': pageThumbnail,
+  'member-item': memberItem,
+  'outline-item': outlineItem,
+  'annotation-selection': annotationSelection,
+  'form-field': formField,
+  'comment-item': commentItem,
+  'signature': signature,
+  'hint': hint,
+  'notification-item': notificationItem,
+  'showcase-flows': showcaseFlows,
 };
