@@ -22,7 +22,7 @@ Every component file starts with a header comment listing its ◆ Lumin deltas �
 
 ## Status
 
-The preview shows no status chips — only the ◆ prefix and a small **New** tag. `status` in `lib/constants.ts` mirrors the Figma page header chip:
+The preview lists show no status marks — only a small **New** tag on the latest batch (the ◆ prefix was removed from the Home list and desktop sidebar on 2026-10-08). `status` in `lib/constants.ts` mirrors the Figma page header chip:
 
 - **RNR / RNR + Custom** — from the base kit (react-native-reusables), with or without Lumin deltas — no prefix.
 - **◆ Custom** — not in the base kit; Lumin builds it (Drawer, Sheet, Field, Item, Empty, Input Group, Input OTP, Slider, Sonner, Spinner, Date Picker, Calendar, Fullscreen Modal, Splash Screen, all In-app ◆ components).

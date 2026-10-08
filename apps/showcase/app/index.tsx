@@ -208,9 +208,6 @@ function ListItem({ href, name, status, isFirst, isLast }: ListItemProps) {
             isLast && 'rounded-b-lg border-b'
           )}>
           <Text className="text-base font-normal">
-            {status === 'Custom' || status === 'New' ? (
-              <Text className="text-sm text-violet-600 dark:text-violet-400">◆ </Text>
-            ) : null}
             {name}
           </Text>
           <View className="flex-row items-center gap-2">

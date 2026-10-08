@@ -263,7 +263,6 @@ function SidebarItem({
 }) {
   const href = `/components/${item.slug}`;
   const selected = active === href;
-  const custom = item.status === 'Custom' || item.status === 'New';
   return (
     <Pressable
       onPress={() => onSelect(href)}
@@ -276,7 +275,6 @@ function SidebarItem({
       <Text
         className={cn('flex-1 text-sm', selected ? 'font-medium' : 'text-foreground/80')}
         numberOfLines={1}>
-        {custom ? <Text className="text-xs text-violet-600 dark:text-violet-400">◆ </Text> : null}
         {item.name}
       </Text>
       {item.status === 'New' ? (
